@@ -43,6 +43,8 @@ h3{font-size:calc(var(--u)*1.08);font-weight:750;letter-spacing:-.008em;margin-b
 em.hl{font-style:normal;color:var(--orange)}
 
 .cols{display:grid;gap:calc(var(--u)*.85)}
+.cols>*{min-width:0}          /* sonst sprengt eine breite Tabelle die Spur */
+.grow>*{min-width:0;max-width:100%}
 .c2{grid-template-columns:1fr 1fr}
 .c3{grid-template-columns:repeat(3,1fr)}
 .c4{grid-template-columns:repeat(4,1fr)}
@@ -62,12 +64,13 @@ em.hl{font-style:normal;color:var(--orange)}
 .card.accent{background:var(--orange-soft);border-color:color-mix(in srgb,var(--orange) 38%,var(--line))}
 .card.accent p,.card.accent li{color:var(--ink)}
 
-table{border-collapse:collapse;width:100%;font-size:calc(var(--u)*.9)}
+table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:calc(var(--u)*.9)}
 th,td{padding:calc(var(--u)*.5) calc(var(--u)*.62);text-align:left;border-bottom:1px solid var(--line);
   vertical-align:top}
 th{font-size:calc(var(--u)*.72);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);
   font-weight:750}
-td.lbl{color:var(--ink);font-weight:650;white-space:nowrap}
+td.lbl{color:var(--ink);font-weight:650}
+th,td{overflow-wrap:anywhere}
 th.pick,td.pick{background:var(--orange-soft)}
 th.pick{color:var(--orange)}
 .yes{color:var(--green);font-weight:750}
@@ -104,8 +107,14 @@ code{font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
   color:var(--ink-3);padding-top:calc(var(--u)*.7);margin-top:auto}
 
 #bar{position:fixed;left:0;top:0;height:3px;background:var(--orange);z-index:40;transition:width .3s}
-#hud{position:fixed;right:14px;bottom:11px;font-size:12px;color:var(--ink-3);
+#hud{position:fixed;right:120px;bottom:13px;font-size:12px;color:var(--ink-3);
   font-family:ui-monospace,monospace;z-index:40}
+#nav2{position:fixed;right:14px;bottom:8px;z-index:45;display:flex;gap:6px}
+#nav2 button{width:44px;height:38px;border-radius:9px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:19px;line-height:1;cursor:pointer;
+  display:grid;place-items:center;font-family:inherit}
+#nav2 button:hover:not(:disabled){border-color:var(--orange);color:var(--orange)}
+#nav2 button:disabled{opacity:.32;cursor:default}
 #hint{position:fixed;left:14px;bottom:11px;font-size:12px;color:var(--ink-3);z-index:40;transition:opacity .6s}
 
 #notes{position:fixed;left:0;right:0;bottom:0;max-height:42vh;overflow:auto;z-index:50;
@@ -128,8 +137,12 @@ code{font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
 <body>
 <div id="bar"></div><div id="stage"></div><div id="grid"></div>
 <div id="notes"><h4>Sprechtext</h4><div id="notesBody"></div></div>
-<div id="hint">← → blättern · <b>N</b> Sprechtext · <b>O</b> Übersicht · <b>D</b> dunkel · <b>F</b> Vollbild</div>
+<div id="hint">← → oder Knöpfe unten rechts · linkes Drittel klicken = zurück · <b>N</b> Sprechtext · <b>O</b> Übersicht · <b>D</b> dunkel · <b>F</b> Vollbild</div>
 <div id="hud"></div>
+<div id="nav2">
+  <button id="prev" title="Zurück (Pfeil links)">‹</button>
+  <button id="next" title="Weiter (Pfeil rechts)">›</button>
+</div>
 
 <script>
 const SLIDES = [
@@ -612,13 +625,17 @@ function renderNotes(){
   notesBody.innerHTML=(SLIDES[i].notes||[]).map(([k,t])=>
     k==='cue'?'<p class="cue">▸ '+t+'</p>':'<p>„'+t+'"</p>').join('');
 }
+const prevBtn=document.getElementById('prev'),nextBtn=document.getElementById('next');
 function go(n){
   i=Math.max(0,Math.min(SLIDES.length-1,n));
   document.querySelectorAll('.slide').forEach(el=>el.classList.toggle('on',+el.dataset.n===i));
   bar.style.width=((i+1)/SLIDES.length*100)+'%';
   hud.textContent=(i+1)+' / '+SLIDES.length;
+  prevBtn.disabled=i===0; nextBtn.disabled=i===SLIDES.length-1;
   renderNotes();location.hash=i+1;
 }
+prevBtn.onclick=e=>{e.stopPropagation();go(i-1)};
+nextBtn.onclick=e=>{e.stopPropagation();go(i+1)};
 function toggleNotes(v){
   notesOn=v===undefined?!notesOn:v;
   notesEl.classList.toggle('on',notesOn);
@@ -641,7 +658,8 @@ addEventListener('keydown',e=>{
 });
 addEventListener('click',e=>{
   if(gridEl.classList.contains('on')||notesEl.contains(e.target))return;
-  go(e.clientX<innerWidth*0.26?i-1:i+1);
+  if(e.target.closest('#nav2'))return;
+  go(e.clientX<innerWidth*0.33?i-1:i+1);   // linkes Drittel = zurück
 });
 setTimeout(()=>{hint.style.opacity='0'},6000);
 go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
