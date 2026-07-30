@@ -136,17 +136,27 @@ function looksMissing(r) {
   return /is not recognized as|command not found|No such file or directory/i.test(s);
 }
 
+/**
+ * With shell:true Node deprecates passing a separate args array (DEP0190), because it only
+ * concatenates them. So we concatenate ourselves and hand over one command string. Our args
+ * are fixed literals (no user input reaches this), and anything with a space gets quoted.
+ */
+function quoteArg(a) {
+  return /[\s"&|<>^]/.test(a) ? '"' + String(a).replace(/"/g, '""') + '"' : a;
+}
+
 function runAz(args, timeoutMs = 20000, interactive = false) {
   const win = process.platform === 'win32';
-  const opts = { timeout: timeoutMs, windowsHide: true, shell: win, encoding: 'utf8' };
+  const opts = { timeout: timeoutMs, windowsHide: true, shell: true, encoding: 'utf8' };
   if (interactive) opts.stdio = 'inherit';
-  let r = spawnSync('az', args, opts);
+  const tail = args.map(quoteArg).join(' ');
+  let r = spawnSync('az ' + tail, opts);
   if (looksMissing(r)) {
     for (const c of azCandidates()) {
       if (existsSync(c)) {
-        // Still through the shell: since Node 20 a .cmd file cannot be spawned directly
-        // (EINVAL). Quote the path, it usually contains spaces.
-        r = spawnSync(win ? '"' + c + '"' : c, args, opts);
+        // Since Node 20 a .cmd file cannot be spawned directly (EINVAL), so this stays on
+        // the shell path. Quote it, the path usually contains spaces.
+        r = spawnSync(quoteArg(c) + ' ' + tail, opts);
         break;
       }
     }
