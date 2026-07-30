@@ -1,0 +1,8 @@
+﻿{
+    "requirements_file":  "output/generated_docs/extracted_requirements.xlsx",
+    "domain":  "Core Banking/Payments",
+    "context_file":  "output/generated_docs/SAMPLE_IP_context_complete.md",
+    "test_cases_file":  "output/test_cases/generated_test_cases.xlsx",
+    "generated_date":  "2026-07-28 13:45:09",
+    "project_name":  "SAMPLE_IP"
+}

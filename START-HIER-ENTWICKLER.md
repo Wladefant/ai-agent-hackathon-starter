@@ -40,7 +40,17 @@ Jedes Beispiel zeigt dasselbe Muster in einem anderen Anwendungsfall:
 **Der Punkt, um den es geht:** Ein „Agent" in GitHub Copilot ist zu 80 % gut geschriebener
 Kontext plus ein Prüfmechanismus. Nicht Magie, nicht Framework.
 
-### 2. Das Azure-DevOps-Toolkit
+### 2. Das große Beispiel — ein echtes Sechs-Agenten-System
+
+👉 **[agentensystem-testing/START-HIER.md](agentensystem-testing/START-HIER.md)**
+
+Wenn du sehen willst, wie das Muster aus den drei kleinen Beispielen aussieht, wenn es
+ausgebaut ist: sechs Agenten, ein Orchestrator, Skills als eigene Dateien, Prüfgates und
+Schwellwerte in `config.json`. Läuft mit Beispieldaten sofort durch.
+
+**Zum Überfliegen reichen drei Dateien** — die Reihenfolge steht in `START-HIER.md`.
+
+### 3. Das Azure-DevOps-Toolkit
 
 👉 **[azure-devops/](azure-devops/)**
 

@@ -39,6 +39,7 @@ das Azure-DevOps-Toolkit.
 | **[prompts/](prompts/)** | 7 fertige Agenten-Prompts mit Beispiel-Eingaben und erwarteter Ausgabe | alle |
 | **[azure-devops/](azure-devops/)** | Wie du Azure DevOps anbindest — von „per Hand" bis „Skript, das läuft" | alle, gestaffelt nach Können |
 | **[copilot-beispiele/](copilot-beispiele/)** | 3 kleine Repos für GitHub Copilot, jedes in 2 Minuten vorführbar | technisch |
+| **[agentensystem-testing/](agentensystem-testing/START-HIER.md)** | Das große Beispiel: ein komplettes Sechs-Agenten-System, das aus Dokumenten Anforderungen und Testfälle macht. Zum Anschauen und Abschauen | alle — Lesen lohnt sich auch ohne Technik |
 
 ---
 

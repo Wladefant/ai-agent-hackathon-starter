@@ -1,0 +1,54 @@
+{
+    "models": {
+        "context_generation": "Claude Opus 4",
+        "requirements_extraction": "Claude Opus 4",
+        "requirements_validation": "Claude Opus 4",
+        "requirements_remediation": "Claude Opus 4",
+        "test_case_generation": "Claude Opus 4",
+        "test_case_validation": "Claude Opus 4",
+        "test_case_remediation": "Claude Opus 4"
+    },
+    "validation_thresholds": {
+        "traceability_pass": 80,
+        "traceability_soft_fail": 60,
+        "test_case_pass_rate_pct": 90,
+        "test_case_fail_rate_pct": 10,
+        "requirements_pass_rate_pct": 70,
+        "max_remediation_iterations": 3,
+        "min_score_pass": 4,
+        "min_score_soft_fail": 3
+    },
+    "file_paths": {
+        "requirements": "output/generated_docs/extracted_requirements.xlsx",
+        "test_cases": "output/test_cases/generated_test_cases.xlsx",
+        "context": "output/generated_docs/{project_name}_context_complete.md",
+        "validation_context": "output/generated_docs/validation_context.json",
+        "traceability_matrix": "output/traceability/traceability_matrix.xlsx",
+        "req_validation_report": "output/validation/requirements_validation_report.xlsx",
+        "tc_validation_report": "output/validation/test_case_validation_report.xlsx",
+        "remediation_log": "output/remediation/remediation_log.xlsx",
+        "requirements_summary": "output/validation/requirements_validation_summary.md",
+        "tc_summary": "output/validation/test_case_validation_summary.md"
+    },
+    "context_generation": {
+        "include_images": true,
+        "max_image_analysis": 20
+    },
+    "test_generation": {
+        "category_distribution": {
+            "Positive Path": 0.20,
+            "Negative": 0.30,
+            "Boundary": 0.15,
+            "Integration": 0.20,
+            "Resilience": 0.15
+        },
+        "min_tests_per_requirement": 2,
+        "max_tests_per_requirement": 10
+    },
+    "human_gates": {
+        "gate_1_requirements": true,
+        "gate_2_validation": true,
+        "gate_3_test_cases": true,
+        "auto_approve_threshold": 90
+    }
+}
