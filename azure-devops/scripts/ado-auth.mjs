@@ -124,15 +124,29 @@ function azCandidates() {
   ];
 }
 
+/**
+ * "az is not installed" looks different depending on how it is launched. With shell:true
+ * (needed on Windows, where az is az.cmd) there is no ENOENT — cmd.exe just prints
+ * "'az' is not recognized". Both signals count, otherwise the self-test reports a green
+ * "Azure CLI gefunden" on a machine that has no Azure CLI at all.
+ */
+function looksMissing(r) {
+  if (r.error && r.error.code === 'ENOENT') return true;
+  const s = String(r.stderr || '');
+  return /is not recognized as|command not found|No such file or directory/i.test(s);
+}
+
 function runAz(args, timeoutMs = 20000, interactive = false) {
   const win = process.platform === 'win32';
   const opts = { timeout: timeoutMs, windowsHide: true, shell: win, encoding: 'utf8' };
   if (interactive) opts.stdio = 'inherit';
   let r = spawnSync('az', args, opts);
-  if (r.error && r.error.code === 'ENOENT') {
+  if (looksMissing(r)) {
     for (const c of azCandidates()) {
       if (existsSync(c)) {
-        r = spawnSync(c, args, { ...opts, shell: false });
+        // Still through the shell: since Node 20 a .cmd file cannot be spawned directly
+        // (EINVAL). Quote the path, it usually contains spaces.
+        r = spawnSync(win ? '"' + c + '"' : c, args, opts);
         break;
       }
     }
@@ -141,7 +155,7 @@ function runAz(args, timeoutMs = 20000, interactive = false) {
     code: typeof r.status === 'number' ? r.status : r.error ? -1 : 1,
     stdout: r.stdout || '',
     stderr: r.stderr || (r.error ? String(r.error.message) : ''),
-    missing: Boolean(r.error && r.error.code === 'ENOENT'),
+    missing: looksMissing(r),
   };
 }
 
@@ -324,8 +338,8 @@ async function selftest() {
   line(nodeMajor >= 18, 'Node ' + process.versions.node + (nodeMajor >= 18 ? '' : ' — Node 18+ noetig (fetch fehlt)'));
   if (nodeMajor < 18) ok = false;
 
-  const ver = runAz(['version'], 30000);
-  if (ver.missing) {
+  const ver = runAz(['version'], 60000);
+  if (ver.missing || ver.code !== 0) {
     line(false, 'Azure CLI gefunden', 'az ist nicht im PATH. https://learn.microsoft.com/cli/azure/install-azure-cli');
     ok = false;
   } else {

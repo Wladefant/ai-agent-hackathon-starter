@@ -40,7 +40,8 @@ const MAX_IDS_PER_CALL = 200;
 function cellValue(v) {
   if (v == null) return '';
   if (typeof v === 'object') return v.displayName || v.name || JSON.stringify(v);
-  return String(v).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  // NFC: decomposed umlauts (o + combining diaeresis) count as 2 chars and break padEnd.
+  return String(v).normalize('NFC').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function printTable(rows, fields) {
