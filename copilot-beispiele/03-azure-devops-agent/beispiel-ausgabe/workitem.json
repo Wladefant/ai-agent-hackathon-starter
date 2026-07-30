@@ -1,0 +1,19 @@
+{
+  "typ": "User Story",
+  "titel": "Export der Umsatzliste gibt Rueckmeldung und verhindert Mehrfachklicks",
+  "beschreibung": "Beim Export der Umsatzliste in der Weboberflaeche gibt es zwischen Klick und fertiger Datei keine Rueckmeldung. Bei grossen Listen dauert der Export ueber eine Minute.\n\nNutzerinnen und Nutzer klicken in dieser Zeit mehrfach auf die Schaltflaeche und erhalten mehrere identische Dateien. Faellt der Export aus, passiert sichtbar nichts.\n\nDer Support meldet dazu rund 15 Tickets pro Monat. Betroffen ist ausschliesslich die Weboberflaeche.",
+  "akzeptanzkriterien": [
+    "Nach dem ersten Klick ist die Export-Schaltflaeche deaktiviert, bis der Export beendet oder fehlgeschlagen ist.",
+    "Waehrend des Exports ist ein Fortschrittshinweis sichtbar.",
+    "Bei Erfolg wird genau eine Datei erzeugt, auch wenn waehrend des Exports mehrfach geklickt wurde.",
+    "Bei Fehlschlag erscheint eine Meldung mit einer Schaltflaeche zum Wiederholen.",
+    "Nach dem Wiederholen gilt dasselbe Verhalten wie beim ersten Versuch.",
+    "Das Verhalten ist fuer Listen mit mehr als 10.000 Umsaetzen geprueft."
+  ],
+  "area": "<DEIN-PROJEKT>\\<DEIN-TEAM>",
+  "iteration": "<DEIN-PROJEKT>\\Sprint 1",
+  "tags": ["umsatzliste", "export", "web"],
+  "prioritaet": 2,
+  "story_points": 3,
+  "parent_id": 4711
+}

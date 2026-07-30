@@ -1,0 +1,22 @@
+{
+  "_hinweis": "Vorlage. Der Agent fuellt sie aus und legt das Ergebnis unter beispiel-ausgabe/workitem.json ab. Felder mit _ am Anfang werden von build-workitem.mjs ignoriert.",
+  "typ": "User Story",
+  "titel": "",
+  "beschreibung": "",
+  "akzeptanzkriterien": [],
+  "area": "<DEIN-PROJEKT>\\<DEIN-TEAM>",
+  "iteration": "<DEIN-PROJEKT>\\Sprint 1",
+  "tags": [],
+  "prioritaet": 2,
+  "story_points": null,
+  "parent_id": null,
+  "_felder": {
+    "typ": "User Story | Bug | Task | Feature",
+    "titel": "ein Satz, Ergebnis statt Taetigkeit, hoechstens 120 Zeichen",
+    "beschreibung": "Kontext, Problem, Nutzen. Absaetze mit Leerzeile trennen.",
+    "akzeptanzkriterien": "Liste, jedes Kriterium einzeln und pruefbar",
+    "prioritaet": "1 = hoechste, 4 = niedrigste",
+    "story_points": "Zahl oder null, wenn nicht geschaetzt",
+    "parent_id": "ID des uebergeordneten Work Items oder null"
+  }
+}

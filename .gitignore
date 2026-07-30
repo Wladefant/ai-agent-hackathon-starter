@@ -1,0 +1,21 @@
+# Zugangsdaten und Token — niemals committen
+.env
+.env.*
+*.token
+*token-cache*
+.auth/
+secrets/
+*.pat
+
+# Node
+node_modules/
+
+# Betriebssystem / Editor
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+
+# Ausgaben aus Testläufen
+out/
+tmp/
+*.log

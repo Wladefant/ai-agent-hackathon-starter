@@ -1,0 +1,98 @@
+{
+  "quelle": "beispiel-eingabe/anforderung.md (ANF-1042)",
+  "testfaelle": [
+    {
+      "id": "TC-001",
+      "titel": "Tageslimit erhoehen wird nach Freigabe sofort wirksam",
+      "vorbedingung": "Kontoinhaberin ist angemeldet, aktuelles Tageslimit 2.000 EUR, keine Limitaenderung heute.",
+      "schritte": [
+        "Einstellungen oeffnen",
+        "Bereich Limits waehlen",
+        "Neues Tageslimit 5.000 EUR eingeben",
+        "Aenderung bestaetigen",
+        "Zweiten Faktor eingeben und freigeben"
+      ],
+      "erwartetes-ergebnis": "Die Limituebersicht zeigt 5.000 EUR, und eine Ueberweisung ueber 4.500 EUR wird angenommen.",
+      "typ": "happy-path"
+    },
+    {
+      "id": "TC-002",
+      "titel": "Tageslimit senken funktioniert ohne zweiten Faktor",
+      "vorbedingung": "Kontoinhaberin ist angemeldet, aktuelles Tageslimit 5.000 EUR.",
+      "schritte": [
+        "Bereich Limits oeffnen",
+        "Neues Tageslimit 1.000 EUR eingeben",
+        "Aenderung bestaetigen"
+      ],
+      "erwartetes-ergebnis": "Es wird kein zweiter Faktor abgefragt, und die Uebersicht zeigt sofort 1.000 EUR.",
+      "typ": "happy-path"
+    },
+    {
+      "id": "TC-003",
+      "titel": "Betrag ueber dem Maximum wird abgelehnt",
+      "vorbedingung": "Kontoinhaberin ist angemeldet und befindet sich im Bereich Limits.",
+      "schritte": [
+        "Neues Tageslimit 50.100 EUR eingeben",
+        "Aenderung bestaetigen"
+      ],
+      "erwartetes-ergebnis": "Feldfehler mit Hinweis auf den Bereich 100 bis 50.000 EUR, das alte Limit bleibt unveraendert.",
+      "typ": "fehlerfall"
+    },
+    {
+      "id": "TC-004",
+      "titel": "Betrag ohne volle Hunderter-Schrittweite wird abgelehnt",
+      "vorbedingung": "Kontoinhaberin ist angemeldet und befindet sich im Bereich Limits.",
+      "schritte": [
+        "Neues Tageslimit 2.550 EUR eingeben",
+        "Aenderung bestaetigen"
+      ],
+      "erwartetes-ergebnis": "Feldfehler mit Hinweis auf volle 100 EUR, es wird nichts gespeichert.",
+      "typ": "fehlerfall"
+    },
+    {
+      "id": "TC-005",
+      "titel": "Falscher zweiter Faktor laesst das alte Limit bestehen",
+      "vorbedingung": "Kontoinhaberin ist angemeldet, Tageslimit 2.000 EUR, Erhoehung auf 10.000 EUR wurde bestaetigt.",
+      "schritte": [
+        "Falschen zweiten Faktor eingeben",
+        "Freigabe absenden"
+      ],
+      "erwartetes-ergebnis": "Fehlermeldung zur Freigabe, und die Uebersicht zeigt weiterhin 2.000 EUR.",
+      "typ": "fehlerfall"
+    },
+    {
+      "id": "TC-006",
+      "titel": "Grenzwerte 100 EUR und 50.000 EUR werden angenommen",
+      "vorbedingung": "Kontoinhaberin ist angemeldet, heute noch keine Limitaenderung erfolgt.",
+      "schritte": [
+        "Neues Tageslimit 100 EUR eingeben und bestaetigen",
+        "Neues Tageslimit 50.000 EUR eingeben, bestaetigen und freigeben"
+      ],
+      "erwartetes-ergebnis": "Beide Werte werden ohne Feldfehler gespeichert und in der Uebersicht angezeigt.",
+      "typ": "grenzfall"
+    },
+    {
+      "id": "TC-007",
+      "titel": "Vierte Aenderung am selben Tag wird gesperrt",
+      "vorbedingung": "Kontoinhaberin ist angemeldet und hat heute bereits drei Limitaenderungen durchgefuehrt.",
+      "schritte": [
+        "Bereich Limits oeffnen",
+        "Neues Tageslimit 3.000 EUR eingeben",
+        "Aenderung bestaetigen"
+      ],
+      "erwartetes-ergebnis": "Hinweis auf das Tageslimit von drei Aenderungen, Speichern ist bis zum Folgetag gesperrt.",
+      "typ": "grenzfall"
+    },
+    {
+      "id": "TC-008",
+      "titel": "Bevollmaechtigte koennen das Tageslimit nicht aendern",
+      "vorbedingung": "Bevollmaechtigter Nutzer ist fuer ein fremdes Konto angemeldet.",
+      "schritte": [
+        "Einstellungen oeffnen",
+        "Bereich Limits aufrufen"
+      ],
+      "erwartetes-ergebnis": "Das Limit wird nur lesend angezeigt, die Schaltflaeche zum Aendern fehlt oder ist deaktiviert.",
+      "typ": "berechtigung"
+    }
+  ]
+}

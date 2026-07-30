@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Testfaelle",
+  "description": "Vertrag fuer die Ausgabe des Testfall-Generators. Der Agent MUSS genau diese Struktur liefern.",
+  "type": "object",
+  "required": ["quelle", "testfaelle"],
+  "properties": {
+    "quelle": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Datei oder ID der Anforderung, aus der die Testfaelle abgeleitet wurden."
+    },
+    "testfaelle": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "titel", "vorbedingung", "schritte", "erwartetes-ergebnis", "typ"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^TC-[0-9]{3}$",
+            "description": "Fortlaufend, Format TC-001."
+          },
+          "titel": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Ein Satz, beschreibt das Pruefziel, keine Schrittanweisung."
+          },
+          "vorbedingung": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Zustand vor dem ersten Schritt. Rolle, Datenlage, Einstiegspunkt."
+          },
+          "schritte": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 5 },
+            "description": "Handlungen in Reihenfolge, je eine pro Eintrag, ohne Erwartung."
+          },
+          "erwartetes-ergebnis": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Beobachtbares Ergebnis. Pruefbar, nicht 'funktioniert'."
+          },
+          "typ": {
+            "type": "string",
+            "enum": ["happy-path", "fehlerfall", "grenzfall", "berechtigung"]
+          }
+        }
+      }
+    }
+  }
+}
