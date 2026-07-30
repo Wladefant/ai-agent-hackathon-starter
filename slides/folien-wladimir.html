@@ -134,6 +134,12 @@ code{font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
 .thumb .t{font-size:13.5px;font-weight:700;margin-top:4px;line-height:1.28}
 
 
+.prompt{background:var(--card);border:1px solid var(--line);border-radius:calc(var(--u)*.6);
+  padding:calc(var(--u)*.7) calc(var(--u)*.9);font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
+  font-size:calc(var(--u)*.63);line-height:1.5;white-space:pre-wrap;color:var(--ink-2);
+  overflow:hidden;min-width:0}
+.prompt b{color:var(--orange);font-weight:700}
+.prompt .dim{color:var(--ink-3)}
 .copybox{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--orange);
   border-radius:calc(var(--u)*.5);padding:calc(var(--u)*.55) calc(var(--u)*.75);
   display:flex;gap:calc(var(--u)*.6);align-items:flex-start;justify-content:space-between}
@@ -283,20 +289,23 @@ const SLIDES = [
   <div class="grow">
    <div class="cols c2">
     <div class="card good">
-     <h3>✓ Geht mit jeder Copilot-Lizenz</h3>
+     <h3>✓ Steht euch direkt zur Verfügung</h3>
      <ul>
        <li>SharePoint-Sites, -Ordner, einzelne Dateien</li>
        <li>hochgeladene Dateien</li>
        <li>öffentliche Websites</li>
+       <li><b>eure Outlook-Mails</b></li>
+       <li><b>Teams-Chatnachrichten</b></li>
+       <li>freigeschaltete Copilot-Connectoren</li>
      </ul>
     </div>
     <div class="card">
-     <h3>Zusätzlich mit M365-Copilot-Add-on</h3>
-     <ul>
-       <li>eure Outlook-Mails</li>
-       <li>Teams-Chatnachrichten</li>
-       <li>Copilot-Connectoren, die im Tenant freigeschaltet sind</li>
-     </ul>
+     <h3>Was die Grenze wirklich zieht</h3>
+     <p><b>Nicht die Lizenz — die Berechtigung.</b> Der Agent sieht genau das, was ihr
+       selbst sehen dürft. Nicht mehr, nicht weniger.</p>
+     <p style="margin-top:calc(var(--u)*.5)">Das heißt auch: Was <b>ihr</b> im Agenten
+       auswerten könnt, kann eine Kollegin mit anderen Rechten möglicherweise nicht.
+       Denkt daran, wenn ihr den Agenten später weitergebt.</p>
     </div>
    </div>
    <div class="card bad" style="margin-top:calc(var(--u)*.85)">
@@ -306,12 +315,11 @@ const SLIDES = [
       öffnen könnt.</b> Wenn nicht: Datei exportieren und direkt an den Agenten hängen.
       Das ist kein Kompromiss, das ist der übliche Weg.</p>
    </div>
-   <div class="src">Zum Bauen eines Agenten wird eine Microsoft-365-Copilot-Lizenz benötigt ·
-     Quelle: Microsoft Learn, Agent-Builder-Voraussetzungen</div>
+   <div class="src">Wissensquellen bis 20 Stück · der Agent erbt eure Leserechte, er umgeht keine</div>
   </div>
   <div class="foot"><span>2 von 4 · Der Agent Builder</span><span></span></div>`,
  notes:[
-  ["say","Wissensquellen: Mit jeder Copilot-Lizenz könnt ihr SharePoint-Inhalte, hochgeladene Dateien und öffentliche Websites anbinden. Mit dem M365-Copilot-Add-on zusätzlich eure eigenen Mails, Teams-Chats und die Connectoren, die im Tenant freigeschaltet sind."],
+  ["say","Wissensquellen: SharePoint-Inhalte, hochgeladene Dateien, öffentliche Websites — und bei uns auch direkt eure Outlook-Mails und Teams-Chats. Dafür müsst ihr nichts extra beantragen."],["say","Die Grenze zieht nicht die Lizenz, sondern die Berechtigung: Der Agent sieht genau das, was ihr selbst sehen dürft. Er umgeht keine Rechte."],
   ["say","Und jetzt der Punkt, der heute Nachmittag die meisten Teams kostet: Wenn euer Use Case an einer Quelle hängt, an die ihr nicht drankommt, ist er tot — und zwar leise. Ihr merkt es erst um 17 Uhr. Prüft in den ersten zehn Minuten, ob ihr die Daten überhaupt öffnen könnt."],
   ["cue","Wenn nicht: Datei exportieren und anhängen. Das ist der normale Weg, kein Notbehelf."]
  ]
@@ -481,6 +489,60 @@ const SLIDES = [
  ]
 },
 {
+ title:"Der Prompt hinter Demo 1",
+ html:`<div class="kicker">Folie vor der Demo · so sieht er in echt aus</div>
+  <h2>Der produktive Prompt des Übersetzungsagenten</h2>
+  <div class="grow">
+   <div class="cols c21">
+    <div class="prompt"><b>ROLLE</b>
+Sie sind ein Übersetzungsassistent für Kundenservice-Mitarbeitende.
+Sie unterstützen einen MENSCHLICHEN Agenten.
+Sie handeln NICHT autonom und kommunizieren NICHT direkt
+mit Kundinnen oder Kunden.
+
+<b>AUFGABE</b>
+- Jede Eingabe ist IMMER ein Quelltext für eine Übersetzung.
+- Keine Beantwortung, Erklärung, Bewertung oder Beratung.
+- Übersetzen Sie ausschließlich in die andere Sprache (DE &lt;-&gt; EN).
+- Liefern Sie zusätzlich ein Audit-Log zur Terminologie-Prüfung.
+
+<b>QUELLENPRIORITÄT</b>
+1. Excel-Glossar    2. Professionelles Übersetzungsurteil
+
+<b>BEWAHREN (STRICT)</b>
+Verantwortlichkeiten · Produkt- und Markennamen · Platzhalter,
+IDs, Tags · Zahlen, Beträge, Datumsangaben, Referenzen
+
+<b>VERBOTEN</b>
+Inhalte erfinden · zusammenfassen · Verantwortlichkeiten ändern
+· rechtliche oder steuerliche Beratung ergänzen
+
+<b>AUSGABEFORMAT (STRICT)</b>
+[TRANSLATE] &lt;übersetzter Text&gt;
+[AUDIT_LOG] ExcelLookup · Richtung · SourceCoverage je Begriff</div>
+    <div>
+     <div class="card accent"><h3>Was ihr daran seht</h3>
+      <p><b>Kein Zauberspruch.</b> Das sind sechs klar benannte Blöcke — die vier von
+        Folie 8, plus Quellenpriorität und ein Bewahren-Abschnitt.</p></div>
+     <div class="card" style="margin-top:calc(var(--u)*.6)"><h3>Die drei Stellen, auf die es ankommt</h3>
+      <ul>
+       <li><b>„Handeln NICHT autonom"</b> steht ganz oben — der Agent weiß, dass ein Mensch prüft</li>
+       <li><b>Quellenpriorität</b> — erst Glossar, dann eigenes Urteil. So bleibt Terminologie stabil</li>
+       <li><b>Ausgabeformat</b> erzwingt das Audit-Log. Ohne Format kein Prüfschritt</li>
+      </ul></div>
+    </div>
+   </div>
+   <div class="src">Vollständig im Repo unter prompts/ — dieser hier läuft produktiv im Kundenservice</div>
+  </div>
+  <div class="foot"><span>vor Demo 1</span><span>danach erst umschalten</span></div>`,
+ notes:[
+  ["say","Bevor ich das laufen lasse, zeig ich euch den Auftrag. Denn genau das ist der Teil, den ihr nachher selbst schreibt — und den ihr kopieren könnt."],
+  ["say","Das ist kein Zauberspruch. Das sind sechs klar benannte Blöcke: Rolle, Aufgabe, Quellenpriorität, Bewahren, Verboten, Ausgabeformat."],
+  ["say","Drei Stellen sind entscheidend. Erstens: 'Sie handeln nicht autonom' steht ganz oben — der Agent weiß, dass ein Mensch das Ergebnis prüft. Zweitens die Quellenpriorität: erst das Glossar, dann eigenes Urteil, damit die Fachbegriffe stabil bleiben statt jedes Mal anders zu klingen. Drittens das Ausgabeformat — das erzwingt das Audit-Log. Ohne Format kein Prüfschritt."],
+  ["cue","Nicht vorlesen. Auf die drei markierten Blöcke zeigen und den Satz dazu sagen. 60 Sekunden."]
+ ]
+},
+{
  title:"Demo 1 — Übersetzungsagent",
  html:`<div class="switch"><span>🖥</span><span>BILDSCHIRM WECHSELN → Tab 2 · Übersetzungsagent
    <span class="sm">M365 Copilot · Beispieltext liegt in der Notiz · 2–3 Minuten</span></span></div>
@@ -515,6 +577,60 @@ const SLIDES = [
   ["cue","Diesen Text einfügen: Thank you for the information. We need the notification. You can upload it via the document upload in online banking or send it to us by email. Please note that we currently cannot see your Extra account because it is a separate account and you are logged into your joint account."],
   ["say","Schaut nicht auf die Übersetzung, die kann jedes Modell. Schaut auf das Audit-Log: Welcher Fachbegriff kam aus dem Glossar, welcher wurde nicht gefunden, in welche Richtung wurde übersetzt. Ein Mensch kann in fünf Sekunden prüfen, ob er dem Ergebnis trauen darf. Das kostet drei Zeilen Prompt."],
   ["cue","Wenn es nicht lädt: nicht reparieren. 'Das Netz will heute nicht, ich zeig's euch am Tisch' und weiter."]
+ ]
+},
+{
+ title:"Der Prompt hinter Demo 2",
+ html:`<div class="kicker">Folie vor der Demo · so sieht er in echt aus</div>
+  <h2>Der produktive Prompt des Testfall-Generators</h2>
+  <div class="grow">
+   <div class="cols c21">
+    <div class="prompt"><b>ROLLE</b>
+Du unterstützt eine Testerin oder einen Tester.
+Du arbeitest NICHT autonom.
+Du schreibst in KEIN System. Du erzeugst eine Tabelle als Text,
+die ein Mensch prüft und selbst überträgt.
+
+<b>AUFGABE — in dieser Reihenfolge</b>
+1. Zerlege die Eingabe in einzelne prüfbare Aussagen.
+2. Leite je Aussage die Testfälle ab.
+3. Ordne jeden Testfall genau einer Kategorie zu.
+4. Fehlt die fachliche Grundlage, erzeuge KEINEN Testfall,
+   sondern einen Eintrag unter OFFENE PUNKTE.
+5. Vergib fortlaufende IDs.
+
+<b>TESTKATEGORIEN (alle sind zu prüfen)</b>
+HAPPY · FEHLER · GRENZE · BERECHTIGUNG · ZUSTAND
+
+<b>VERBOTEN</b>
+Feldnamen erfinden · die Anforderung bewerten oder umformulieren
+· Testfälle zu Kategorien ohne fachliche Grundlage
+
+<b>AUSGABEFORMAT (STRICT)</b>
+ID | Kategorie | Titel | Vorbedingung | Schritte | Erwartet
+danach ABDECKUNG, danach OFFENE PUNKTE
+
+<b>Erfinde nichts. Fehlt eine Angabe, schreib FEHLT
+und formuliere die Rückfrage.</b></div>
+    <div>
+     <div class="card accent"><h3>Der ganze Trick steht in einer Zeile</h3>
+      <p><b>Die Kategorienliste.</b> Vollständigkeit kommt nicht vom Modell,
+        sie kommt vom Auftrag. Grenzwerte und Berechtigungsfälle vergisst der Agent nie,
+        weil sie dort stehen.</p></div>
+     <div class="card" style="margin-top:calc(var(--u)*.6)"><h3>Und Schritt 4 verhindert den teuersten Fehler</h3>
+      <p>„Fehlt die Grundlage, erzeuge KEINEN Testfall." Ohne diesen Satz erfindet das
+        Modell einen Grenzwerttest für ein Feld, das es gar nicht gibt — und das fällt
+        beim Review nicht auf.</p></div>
+    </div>
+   </div>
+   <div class="src">Vollständig im Repo unter prompts/01-testfall-generator.md — mit Beispiel-Eingabe und Prüfschritt</div>
+  </div>
+  <div class="foot"><span>vor Demo 2</span><span>danach erst umschalten</span></div>`,
+ notes:[
+  ["say","Auch hier erst der Auftrag. Der ist etwas länger, aber der ganze Trick steht in einer Zeile: der Kategorienliste."],
+  ["say","Vollständigkeit kommt nicht vom Modell, sie kommt vom Auftrag. Happy Path, Fehler, Grenze, Berechtigung, Zustand — weil das dort steht, vergisst der Agent es nie. Von Hand vergisst man unter Zeitdruck genau die letzten drei."],
+  ["say","Und Schritt vier verhindert den teuersten Fehler: 'Fehlt die fachliche Grundlage, erzeuge KEINEN Testfall, sondern einen offenen Punkt.' Ohne diesen Satz erfindet das Modell einen Grenzwerttest für ein Feld, das es gar nicht gibt — und das fällt beim Review nicht auf."],
+  ["cue","Auf den fett gesetzten letzten Satz zeigen: das ist der FEHLT-Satz von vorhin, in echt."]
  ]
 },
 {
