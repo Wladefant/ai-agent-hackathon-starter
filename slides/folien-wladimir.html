@@ -132,6 +132,26 @@ code{font-family:"Cascadia Mono",ui-monospace,Consolas,monospace;
 .thumb:hover{border-color:var(--orange)}
 .thumb .n{font-size:10.5px;color:var(--ink-3);font-family:ui-monospace,monospace}
 .thumb .t{font-size:13.5px;font-weight:700;margin-top:4px;line-height:1.28}
+
+/* ---------- Druck / PDF: jede Folie eine Seite, quer ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  :root{--u:16px}                     /* feste Größe, unabhängig vom Fenster */
+  html,body{height:auto;overflow:visible;background:#fff}
+  #bar,#hud,#hint,#nav2,#notes,#grid{display:none !important}
+  #stage{position:static;display:block;padding:0}
+  .slide{
+    display:flex !important;
+    width:1280px;height:720px;max-width:none;max-height:none;
+    padding:56px 68px;background:#fff;
+    break-after:page;page-break-after:always;animation:none
+  }
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .card,.node,.step,.tab{break-inside:avoid}
+  .switch,.card.accent,th.pick,td.pick,.step::before,.num{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 </head>
 <body>
