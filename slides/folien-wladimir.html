@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Agent Hackathon — Technische Leitplanken</title>
+<style>
+:root{
+  --orange:#ff6200;
+  --orange-soft:#fff1e6;
+  --ink:#16181d;
+  --ink-2:#5a6070;
+  --ink-3:#8b91a1;
+  --bg:#faf9f7;
+  --card:#ffffff;
+  --line:#e6e3dd;
+  --green:#0a8754;
+  --red:#c8362a;
+}
+html[data-theme="dark"]{
+  --orange:#ff7a26;
+  --orange-soft:#2a1a0e;
+  --ink:#f2f1ee;
+  --ink-2:#a8adba;
+  --ink-3:#767c8b;
+  --bg:#101216;
+  --card:#181b21;
+  --line:#282c35;
+  --green:#3ddc97;
+  --red:#ff6b5e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,sans-serif;
+  overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- stage ---------- */
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+.slide{
+  position:absolute; width:1280px; height:720px; padding:70px 84px;
+  display:none; flex-direction:column; background:var(--bg);
+}
+.slide.on{display:flex; animation:in .34s cubic-bezier(.2,.7,.3,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- type ---------- */
+.kicker{
+  font-size:15px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--orange);font-weight:700;margin-bottom:16px
+}
+h1{font-size:66px;line-height:1.03;letter-spacing:-.028em;font-weight:800}
+h2{font-size:46px;line-height:1.08;letter-spacing:-.022em;font-weight:800;margin-bottom:10px}
+h3{font-size:23px;font-weight:700;letter-spacing:-.01em}
+.sub{font-size:23px;color:var(--ink-2);line-height:1.45;margin-top:16px;max-width:64ch}
+.big{font-size:44px;line-height:1.2;font-weight:800;letter-spacing:-.02em}
+.mono{font-family:"Cascadia Mono",ui-monospace,Consolas,monospace}
+em.hl{font-style:normal;color:var(--orange)}
+strong{font-weight:800}
+
+/* ---------- layout helpers ---------- */
+.grow{flex:1;display:flex;flex-direction:column;justify-content:center}
+.cols{display:grid;gap:26px}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 28px;
+}
+.card h3{margin-bottom:12px}
+.card p,.card li{font-size:18px;line-height:1.55;color:var(--ink-2)}
+.card ul{list-style:none}
+.card li{padding-left:20px;position:relative;margin:7px 0}
+.card li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;
+  border-radius:50%;background:var(--orange)}
+
+.card.good{border-color:color-mix(in srgb,var(--green) 40%,var(--line))}
+.card.bad{border-color:color-mix(in srgb,var(--red) 35%,var(--line))}
+.card.good h3{color:var(--green)} .card.bad h3{color:var(--red)}
+.card.good li::before{background:var(--green)} .card.bad li::before{background:var(--red)}
+.card.accent{background:var(--orange-soft);border-color:color-mix(in srgb,var(--orange) 35%,var(--line))}
+
+/* ---------- statement slide ---------- */
+.statement{
+  border-left:8px solid var(--orange);padding:6px 0 6px 34px;
+}
+.statement .big{max-width:22ch}
+.statement .why{font-size:21px;color:var(--ink-2);margin-top:22px;max-width:60ch;line-height:1.5}
+
+/* ---------- table ---------- */
+table{border-collapse:collapse;width:100%;font-size:18px}
+th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+td.lbl{color:var(--ink-2);font-weight:600}
+th.pick,td.pick{background:var(--orange-soft)}
+th.pick{color:var(--orange)}
+.yes{color:var(--green);font-weight:700}
+.no{color:var(--red);font-weight:700}
+.meh{color:var(--ink-3)}
+
+/* ---------- diagrams ---------- */
+.flow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.node{
+  background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px 20px;font-size:17px;font-weight:650;line-height:1.3
+}
+.node.human{border-color:var(--orange);background:var(--orange-soft);color:var(--orange)}
+.arrow{color:var(--ink-3);font-size:24px;line-height:1}
+
+.stack{display:flex;flex-direction:column;gap:10px}
+.part{
+  display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 20px
+}
+.part .tag{
+  font-size:14px;font-weight:800;letter-spacing:.1em;color:var(--orange);
+  border-right:1px solid var(--line);padding-right:14px
+}
+.part .txt{font-size:17.5px;color:var(--ink-2);line-height:1.45}
+
+.split{display:grid;grid-template-columns:1fr auto 1fr;gap:30px;align-items:center}
+.vs{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:var(--orange);color:#fff;font-weight:800;font-size:14px
+}
+
+/* ---------- footer / chrome ---------- */
+.foot{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:14px;color:var(--ink-3);padding-top:22px;margin-top:auto
+}
+#bar{position:fixed;left:0;top:0;height:3px;background:var(--orange);z-index:40;transition:width .3s}
+#hud{
+  position:fixed;right:16px;bottom:14px;font-size:12.5px;color:var(--ink-3);
+  font-family:ui-monospace,monospace;z-index:40;user-select:none
+}
+#hint{
+  position:fixed;left:16px;bottom:14px;font-size:12.5px;color:var(--ink-3);z-index:40;
+  transition:opacity .5s
+}
+
+/* ---------- notes ---------- */
+#notes{
+  position:fixed;left:0;right:0;bottom:0;max-height:44vh;overflow:auto;z-index:50;
+  background:var(--card);border-top:3px solid var(--orange);
+  padding:22px 30px 26px;display:none;box-shadow:0 -16px 40px rgba(0,0,0,.14)
+}
+#notes.on{display:block}
+#notes h4{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+#notes p{font-size:16.5px;line-height:1.6;color:var(--ink);max-width:105ch;margin-bottom:9px}
+#notes .say{border-left:3px solid var(--line);padding-left:14px}
+#notes .cue{color:var(--ink-3);font-size:14.5px;font-style:italic}
+
+/* ---------- overview ---------- */
+#grid{
+  position:fixed;inset:0;background:var(--bg);z-index:60;display:none;
+  grid-template-columns:repeat(4,1fr);gap:14px;padding:26px;overflow:auto;align-content:start
+}
+#grid.on{display:grid}
+.thumb{
+  border:2px solid var(--line);border-radius:11px;padding:14px;cursor:pointer;
+  background:var(--card);min-height:104px
+}
+.thumb:hover{border-color:var(--orange)}
+.thumb .n{font-size:11px;color:var(--ink-3);font-family:ui-monospace,monospace}
+.thumb .t{font-size:14.5px;font-weight:700;margin-top:5px;line-height:1.3}
+</style>
+</head>
+<body>
+
+<div id="bar"></div>
+<div id="stage"></div>
+<div id="grid"></div>
+<div id="notes"><h4>Sprechtext</h4><div id="notesBody"></div></div>
+<div id="hint">← → blättern · <b>N</b> Sprechtext · <b>O</b> Übersicht · <b>D</b> dunkel · <b>F</b> Vollbild</div>
+<div id="hud"></div>
+
+<script>
+const SLIDES = [
+{
+  title:"Titel",
+  html:`
+    <div class="kicker">Customer Data AI Agent Hackathon · 30. Juli</div>
+    <div class="grow">
+      <h1>Was heute geht.<br>Und was <em class="hl">noch nicht</em>.</h1>
+      <div class="sub">Die technischen Leitplanken für den Nachmittag — damit ihr um 19 Uhr
+        etwas habt, das ihr morgen auch benutzen dürft.</div>
+    </div>
+    <div class="foot"><span>Wladimir Kirjanovs · AI-Coach</span><span>15:00 – 15:20</span></div>`,
+  notes:[
+    ["say","Genau da mache ich weiter — was ist heute schon machbar."],
+    ["say","Ich sag es gleich vorweg, weil es der eine Satz ist, der euch heute Nachmittag vier Stunden sparen kann: Wir haben mehrere Werkzeuge, die alle 'KI-Agent' heißen. Nur eines davon führt heute in den produktiven Einsatz. Wer im falschen baut, hat um 19 Uhr eine schöne Demo, die danach niemand benutzen darf."],
+    ["cue","20 Minuten. Nicht überziehen — Lisa braucht danach die Use Cases."]
+  ]
+},
+{
+  title:"Was geht / was nicht",
+  html:`
+    <div class="kicker">Der Stand heute</div>
+    <h2>Eine ganze Menge geht. Drei Dinge nicht.</h2>
+    <div class="grow">
+      <div class="cols c2">
+        <div class="card good">
+          <h3>✓ Das geht heute</h3>
+          <ul>
+            <li>lesen, suchen, recherchieren</li>
+            <li>zusammenfassen und strukturieren</li>
+            <li>Entwürfe erzeugen</li>
+            <li>Word-, PowerPoint- und Excel-Dateien bauen</li>
+            <li>SharePoint, Teams, Outlook, OneNote</li>
+            <li>eure Besprechungen einbeziehen</li>
+          </ul>
+        </div>
+        <div class="card bad">
+          <h3>✕ Das geht heute noch nicht</h3>
+          <ul>
+            <li>automatisch ein Ticket anlegen</li>
+            <li>einen SharePoint-Eintrag ändern</li>
+            <li>sich selbst starten (Trigger)</li>
+          </ul>
+          <p style="margin-top:18px;font-size:16px">↑ kommt mit Copilot Studio — aber nicht heute</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3</span><span></span></div>`,
+  notes:[
+    ["say","Was heute geht — und das ist eine ganze Menge: lesen, suchen, recherchieren. Zusammenfassen und strukturieren. Entwürfe erzeugen. Word-, PowerPoint- und Excel-Dateien erstellen. Zugriff auf SharePoint, Teams, Outlook, OneNote und eure Besprechungen."],
+    ["say","Was heute noch nicht geht: automatisch ein Ticket anlegen. Einen SharePoint-Eintrag ändern. Und: sich selbst starten — also ein Trigger, der sagt 'wenn X passiert, lauf los'."],
+    ["cue","Nicht entschuldigend sagen. Die linke Spalte ist der Grund, warum sich der Nachmittag lohnt."]
+  ]
+},
+{
+  title:"Die Bauregel",
+  html:`
+    <div class="kicker">Die einzige Regel, die ihr euch merken müsst</div>
+    <div class="grow">
+      <div class="statement">
+        <div class="big">Euer Agent <em class="hl">legt vor</em>.<br>Ein Mensch <em class="hl">schickt ab</em>.</div>
+        <div class="why">Das ist keine Einschränkung, das ist der Bauplan. Wenn Schreibzugriff
+          kommt, schaltet ihr genau diesen letzten Schritt durch — der Rest bleibt, wie er ist.</div>
+      </div>
+      <div class="flow" style="margin-top:44px">
+        <div class="node">Eingabe</div><div class="arrow">→</div>
+        <div class="node">Agent arbeitet</div><div class="arrow">→</div>
+        <div class="node human">MENSCH prüft</div><div class="arrow">→</div>
+        <div class="node">Ergebnis geht raus</div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3</span><span></span></div>`,
+  notes:[
+    ["say","Daraus folgt die einzige Bauregel, die ihr euch merken müsst: Euer Agent legt etwas vor. Ein Mensch schickt es ab."],
+    ["say","Das ist keine Einschränkung, das ist der Bauplan. Wenn Schreibzugriff kommt — und der kommt — schaltet ihr genau diesen letzten Schritt durch, und der Rest bleibt wie er ist."],
+    ["cue","Auf den orangenen Kasten zeigen. Das ist das Bild, das hängenbleiben soll."]
+  ]
+},
+{
+  title:"Ein guter Prompt zählt",
+  html:`
+    <div class="kicker">Damit heute niemand frustriert nach Hause geht</div>
+    <div class="grow">
+      <div class="statement">
+        <div class="big">Ein guter Prompt ist ein <em class="hl">gültiges Ergebnis</em>.</div>
+        <div class="why">Ein durchdachter Prompt, den ab morgen zwanzig Leute benutzen, ist mehr
+          wert als ein halbfertiger Agent, den niemand anfasst. Niemand muss um 19 Uhr ein
+          fertiges Produkt haben.</div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3</span><span></span></div>`,
+  notes:[
+    ["say","Und ganz wichtig, damit heute niemand frustriert nach Hause geht: Ein guter Prompt ist ein gültiges Ergebnis. Ein durchdachter Prompt, den ab morgen zwanzig Leute benutzen, ist mehr wert als ein halbfertiger Agent, den niemand anfasst. Lieber klein starten und sauber zeigen — das steht ja auch schon auf der Folie."],
+    ["cue","Das nimmt Druck raus. Kurz stehen lassen, bevor es weitergeht."]
+  ]
+},
+{
+  title:"Agent oder Chatbot",
+  html:`
+    <div class="kicker">Folie 3a · Gemeinsame Sprache</div>
+    <h2>Agent oder Chatbot?</h2>
+    <div class="grow">
+      <div class="split">
+        <div class="card">
+          <h3>Chatbot</h3>
+          <p style="font-size:19px;margin-bottom:14px">Du fragst, es antwortet.<br>
+             Den nächsten Schritt machst du.</p>
+          <p class="mono" style="font-size:15.5px;color:var(--ink-3)">„Schreib mir eine Mail"</p>
+        </div>
+        <div class="vs">VS</div>
+        <div class="card accent">
+          <h3 style="color:var(--orange)">Agent</h3>
+          <p style="font-size:19px;margin-bottom:14px;color:var(--ink)">Du gibst ein <b>Ziel</b>.<br>
+             Er zerlegt in Schritte, führt aus, prüft, korrigiert.</p>
+          <p class="mono" style="font-size:15.5px">„Geh die 40 Requests durch, finde die
+             unvollständigen, formuliere die Rückfragen, leg sie mir vor"</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3a</span><span></span></div>`,
+  notes:[
+    ["say","Kurz die gemeinsame Sprache, weil wir heute alle dasselbe Wort für verschiedene Dinge benutzen."],
+    ["say","Ein Chatbot antwortet. Ihr fragt, es kommt was zurück, den nächsten Schritt macht ihr."],
+    ["say","Ein Agent bekommt ein Ziel. Er zerlegt es selbst in Schritte, arbeitet sie ab, schaut sich das Ergebnis an und korrigiert. Der Unterschied ist nicht die Technik dahinter — der Unterschied ist, wie viel ihr ihm überlasst."]
+  ]
+},
+{
+  title:"Wann lohnt sich ein Agent",
+  html:`
+    <div class="kicker">Folie 3a · Die Frage vor dem Bauen</div>
+    <div class="grow">
+      <div class="statement">
+        <div class="big" style="max-width:26ch">Ein Agent lohnt sich, wenn die Aufgabe
+          <em class="hl">mehrere Schritte</em> hat — und man das Ergebnis <em class="hl">prüfen</em> kann.</div>
+      </div>
+      <div class="cols c2" style="margin-top:38px">
+        <div class="card bad">
+          <h3>Nur ein Schritt?</h3>
+          <p>Dann reicht ein guter Prompt. Baut keinen Agenten drumherum.</p>
+        </div>
+        <div class="card bad">
+          <h3>Ergebnis nicht prüfbar?</h3>
+          <p>Kein guter Kandidat — egal wie spannend die Idee klingt.
+             Bei dieser Hälfte hängen die meisten. Holt einen Coach.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3a</span><span></span></div>`,
+  notes:[
+    ["say","Und daraus folgt die Frage, die ihr euch vor dem Bauen stellen solltet: Ein Agent lohnt sich, wenn die Aufgabe mehrere Schritte hat — und wenn man das Ergebnis prüfen kann."],
+    ["say","Ein Schritt? Dann reicht ein guter Prompt, baut keinen Agenten drumherum. Ergebnis nicht prüfbar? Dann ist es kein guter Kandidat, egal wie spannend die Idee klingt. Wenn ihr bei der zweiten Hälfte hängt — 'woran erkenne ich, dass das gut ist' — dann holt euch einen Coach. Das ist genau der Punkt, an dem ein Use Case entweder scharf wird oder still scheitert."]
+  ]
+},
+{
+  title:"Die drei Werkzeuge",
+  html:`
+    <div class="kicker">Folie 3b · Die wichtigste Folie heute</div>
+    <h2>Drei Werkzeuge. Nicht austauschbar.</h2>
+    <div class="grow">
+      <table>
+        <tr><th></th><th class="pick">M365 Copilot</th><th>GitHub Copilot</th><th>Copilot Studio</th></tr>
+        <tr><td class="lbl">Für wen</td><td class="pick">alle mit Lizenz</td><td>Entwickler:innen</td><td class="meh">~10 Personen in ING DE</td></tr>
+        <tr><td class="lbl">Läuft produktiv?</td><td class="pick"><span class="yes">ja</span>, als Flow</td><td><span class="no">nein — nur lokal</span></td><td><span class="yes">ja</span></td></tr>
+        <tr><td class="lbl">Lesen</td><td class="pick"><span class="yes">ja</span></td><td><span class="yes">ja</span></td><td><span class="yes">ja</span></td></tr>
+        <tr><td class="lbl">Schreiben</td><td class="pick"><span class="no">meist nicht</span></td><td class="meh">—</td><td><span class="yes">ja</span></td></tr>
+        <tr><td class="lbl">Trigger</td><td class="pick"><span class="no">nein</span></td><td><span class="no">nein</span></td><td><span class="yes">ja</span></td></tr>
+        <tr><td class="lbl"><b>Für heute</b></td><td class="pick"><b style="color:var(--orange)">das hier nehmen</b></td><td>nur mit Entwickler:in</td><td class="meh">nicht verfügbar</td></tr>
+      </table>
+    </div>
+    <div class="foot"><span>Folie 3b</span><span></span></div>`,
+  notes:[
+    ["say","Jetzt die Werkzeuge. Drei Stück, und sie sind nicht austauschbar."],
+    ["say","M365 Copilot — das ist euer Werkzeug. Jede und jeder mit Lizenz kann damit einen Agenten bauen, ohne eine Zeile Code. Und der entscheidende Punkt: Ein Agent, den ihr dort baut, kann später produktiv gestellt werden."],
+    ["say","GitHub Copilot — super Werkzeug, aber für Business-Teilnehmende eine Sackgasse: Der Agent läuft nur lokal auf eurem Rechner. Zum Entwickeln großartig, als Ergebnis für den Fachbereich unbrauchbar. Wenn bei euch jemand entwickelt und es um Code, Repos oder Pull Requests geht — dann ja, dann ist das genau richtig. Ich hab drei fertige Beispiele dabei."],
+    ["say","Copilot Studio — kann alles, was ich gerade als 'geht nicht' aufgezählt habe. Ist nur noch nicht ausgerollt: Ich bin einer von etwa zehn Leuten in ING Deutschland mit Zugang. Also: Es kommt. Baut heute nicht darauf."],
+    ["cue","Falls jemand fragt 'warum darf ich nicht GitHub Copilot nehmen?': Darfst du — wenn ein Entwickler im Team ist und der Use Case bei Code liegt. Nur läuft das Ergebnis danach auf deinem Laptop und sonst nirgends."]
+  ]
+},
+{
+  title:"Die Regel",
+  html:`
+    <div class="kicker">Folie 3b</div>
+    <div class="grow">
+      <div class="statement">
+        <div class="big">Die Regel für heute:<br><em class="hl">Baut mit M365 Copilot.</em></div>
+        <div class="why">Ausnahme: Entwickler:in im Team <b>und</b> der Use Case liegt bei Code,
+          Repos oder Pull Requests. Dann GitHub Copilot.</div>
+      </div>
+      <div style="margin-top:46px">
+        <div class="flow">
+          <div class="node" style="border-style:dashed">Wer benutzt den Agenten <b>nach</b> heute?</div>
+          <div class="arrow">→</div>
+          <div class="node human">Der Fachbereich → M365</div>
+          <div class="node">Entwicklung an Code → GitHub</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3b</span><span></span></div>`,
+  notes:[
+    ["say","Die Regel für heute in einem Satz: Baut mit M365 Copilot."],
+    ["cue","Das ist die Folie, auf die du zurückkommst, wenn beim Coaching ein Team in die falsche Richtung läuft."]
+  ]
+},
+{
+  title:"Prompt-Bauplan",
+  html:`
+    <div class="kicker">Folie 3c · streichbar, wenn die Zeit knapp wird</div>
+    <h2>Ein Prompt, der trägt, hat vier Teile</h2>
+    <div class="grow">
+      <div class="stack">
+        <div class="part"><div class="tag">ROLLE</div><div class="txt">Wer ist der Agent — und wofür ist er <b>nicht</b> zuständig?</div></div>
+        <div class="part"><div class="tag">AUFGABE</div><div class="txt">Was genau soll er tun?</div></div>
+        <div class="part"><div class="tag">REGELN</div><div class="txt">Was ist Pflicht, was verboten, woran misst er sich?</div></div>
+        <div class="part"><div class="tag">FORMAT</div><div class="txt">Wie sieht die Antwort aus? Tabelle? Liste? Welche Spalten?</div></div>
+      </div>
+      <p class="sub" style="font-size:19px;margin-top:22px">
+        Fehlt das <b>Format</b>, kommt Fließtext zurück und ihr arbeitet nach.
+        Fehlen die <b>Regeln</b>, bewertet das Modell nach Gefühl.</p>
+    </div>
+    <div class="foot"><span>Folie 3c</span><span></span></div>`,
+  notes:[
+    ["say","Der häufigste Fehler heute Nachmittag wird ein zu kurzer Auftrag sein. Ein Prompt, der trägt, hat vier Teile. Rolle — wer ist der Agent. Aufgabe — was soll er tun. Regeln — woran misst er sich. Format — wie soll die Ausgabe aussehen."],
+    ["cue","Diese Folie fliegt als erste raus, wenn die Zeit kippt. Sie steht im Infoblatt."]
+  ]
+},
+{
+  title:"Der eine Satz",
+  html:`
+    <div class="kicker">Folie 3c · Der Satz, der in jeden Prompt gehört</div>
+    <div class="grow">
+      <div class="card accent" style="padding:44px 46px">
+        <div class="mono" style="font-size:31px;line-height:1.4;font-weight:600">
+          „Erfinde nichts.<br>Fehlt eine Angabe, schreib <b>FEHLT</b><br>und formuliere die Rückfrage."</div>
+      </div>
+      <p class="sub" style="margin-top:30px">Ohne diesen Satz füllt das Modell Lücken plausibel auf —
+        und ihr seht dem Ergebnis nicht an, was echt war und was erfunden.
+        In einer Bank ist das der Unterschied zwischen <b>brauchbar</b> und <b>gefährlich</b>.</p>
+    </div>
+    <div class="foot"><span>Folie 3c</span><span></span></div>`,
+  notes:[
+    ["say","Und dann der eine Satz, der in jeden Prompt gehört, egal welcher Use Case: 'Erfinde nichts. Wenn eine Angabe fehlt, schreib FEHLT und formuliere die Rückfrage.'"],
+    ["say","Ohne den Satz füllt das Modell Lücken plausibel auf — und ihr seht dem Ergebnis nicht an, was echt war und was erfunden. In einer Bank ist das der Unterschied zwischen brauchbar und gefährlich."]
+  ]
+},
+{
+  title:"Demo 1 — Übersetzungsagent",
+  html:`
+    <div class="kicker">Folie 3d · Live</div>
+    <h2>Beispiel 1 — Übersetzungsagent</h2>
+    <div class="sub" style="margin-top:4px">Gebaut von einem Kollegen. In M365. Ohne eine Zeile Code.</div>
+    <div class="grow">
+      <div class="cols c3">
+        <div class="card"><h3>Das Problem</h3><p>Der Kundenservice schreibt Englisch,
+          unsere Kundinnen und Kunden lesen Deutsch. Jemand übersetzt von Hand und hofft,
+          dass die Bankbegriffe stimmen.</p></div>
+        <div class="card"><h3>Was der Agent tut</h3><p>Übersetzt in beide Richtungen,
+          zieht Fachbegriffe aus einem Glossar, ändert nichts an Verantwortlichkeiten,
+          Beträgen oder IDs.</p></div>
+        <div class="card accent"><h3 style="color:var(--orange)">Der eigentliche Trick</h3>
+          <p style="color:var(--ink)">Ein <b>Audit-Log</b> unter der Übersetzung: welcher Begriff
+          kam aus dem Glossar, welcher nicht. Ein Mensch prüft in fünf Sekunden.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3d · 2–3 Minuten</span><span>→ zum Browser wechseln</span></div>`,
+  notes:[
+    ["cue","JETZT zum Browser wechseln. OneVoice-Agent ist offen."],
+    ["say","Erstes Beispiel, und das ist bewusst keins von mir — das hat ein Kollege gebaut, in M365, ohne Code."],
+    ["say","Schaut nicht auf die Übersetzung, die kann jedes Modell. Schaut auf das Audit-Log: Welcher Fachbegriff kam aus dem Glossar, welcher wurde nicht gefunden, in welche Richtung wurde übersetzt. Ein Mensch kann in fünf Sekunden prüfen, ob er dem Ergebnis trauen darf. Das kostet drei Zeilen Prompt."],
+    ["cue","Input liegt im Demo-Runbook zum Kopieren. Fallback: Screenshots auf dem Desktop."]
+  ]
+},
+{
+  title:"Demo 2 — Testfall-Generator",
+  html:`
+    <div class="kicker">Folie 3d · Live</div>
+    <h2>Beispiel 2 — Testfall-Generator</h2>
+    <div class="sub" style="margin-top:4px">Aus einer Anforderung werden Testfälle. Mein eigener Agent.</div>
+    <div class="grow">
+      <div class="flow" style="margin-bottom:34px">
+        <div class="node">Anforderung</div><div class="arrow">→</div>
+        <div class="node">Agent</div><div class="arrow">→</div>
+        <div class="node">Happy Path · Fehlerfälle<br>Grenzwerte · Berechtigungen</div>
+        <div class="arrow">→</div><div class="node human">MENSCH prüft</div>
+      </div>
+      <div class="card bad">
+        <h3>Und jetzt der ehrliche Teil</h3>
+        <p style="font-size:19px">Hier stimmt es <b>nicht</b>. Das ist normal — deshalb steht hinter
+          jedem Agenten ein Prüfschritt. Ein Agent mit einer bekannten Schwäche und einem
+          Prüfschritt ist besser als einer, dem man blind glaubt.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Folie 3d · 3 Minuten</span><span>→ zum Browser wechseln</span></div>`,
+  notes:[
+    ["cue","Zweite Demo. Echte Anforderung nehmen, kein hübsches Beispiel."],
+    ["say","Aus einer Anforderung Testfälle zu schreiben, ist bei uns Handarbeit — und passiert jede Woche wieder."],
+    ["say","Und jetzt der ehrliche Teil: Hier stimmt es nicht. Das ist normal. Deshalb steht hinter jedem meiner Agenten ein Prüfschritt — ein Mensch schaut drauf und sagt ja oder nein."],
+    ["say","Ich zeig euch das bewusst, weil ihr um 18:30 Uhr genau diesen Moment habt. Euer Agent wird nicht perfekt sein. Meiner ist es auch nicht."],
+    ["cue","WICHTIG: Die Schwäche nicht wegmoderieren. Das ist das stärkste Coaching-Argument des Tages."]
+  ]
+},
+{
+  title:"Mitnehmen",
+  html:`
+    <div class="kicker">Drei Sätze zum Mitnehmen</div>
+    <div class="grow">
+      <div class="cols c3">
+        <div class="card accent"><div class="kicker">01</div>
+          <h3 style="font-size:26px;line-height:1.25">Baut mit<br>M365 Copilot</h3></div>
+        <div class="card accent"><div class="kicker">02</div>
+          <h3 style="font-size:26px;line-height:1.25">Euer Agent legt vor —<br>ein Mensch schickt ab</h3></div>
+        <div class="card accent"><div class="kicker">03</div>
+          <h3 style="font-size:26px;line-height:1.25">Ein guter Prompt ist<br>ein gültiges Ergebnis</h3></div>
+      </div>
+      <p class="sub" style="margin-top:34px">Fragt <b>früh</b>. Die häufigste vermeidbare
+        Sackgasse ist ein Use Case, der Schreibzugriff braucht. Das baue ich mit euch in fünf
+        Minuten um, wenn ihr es um 16 Uhr merkt. Um halb sieben nicht mehr.</p>
+    </div>
+    <div class="foot"><span>Übergabe an Lisa</span><span></span></div>`,
+  notes:[
+    ["say","Das war der Werkzeugkasten. Drei Sätze zum Mitnehmen: Erstens, baut mit M365 Copilot. Zweitens, euer Agent legt vor, ein Mensch schickt ab. Drittens, ein guter Prompt ist ein gültiges Ergebnis."],
+    ["say","Ich lauf den ganzen Nachmittag rum, in Frankfurt vor Ort und im Chat für Nürnberg. Fragt früh — die häufigste vermeidbare Sackgasse ist ein Use Case, der Schreibzugriff braucht."]
+  ]
+},
+{
+  title:"Alles in einem Repo",
+  html:`
+    <div class="kicker">Alles, was ihr braucht</div>
+    <h2>Ein Link. Kein Git nötig.</h2>
+    <div class="grow">
+      <div class="card accent" style="padding:34px 38px;margin-bottom:26px">
+        <div class="mono" style="font-size:29px;font-weight:700;color:var(--orange)">
+          github.com/Wladefant/<br>ai-agent-hackathon-starter</div>
+        <p style="margin-top:14px;font-size:17px;color:var(--ink)">
+          Draufklicken, Text kopieren, fertig. Wer mit Git arbeitet, klont.</p>
+      </div>
+      <div class="cols c4">
+        <div class="card"><h3 style="font-size:18px">7 fertige Prompts</h3>
+          <p style="font-size:15.5px">mit Beispiel-Eingabe und erwarteter Ausgabe</p></div>
+        <div class="card"><h3 style="font-size:18px">Azure DevOps</h3>
+          <p style="font-size:15.5px">drei Stufen — vom Browser bis zum Skript</p></div>
+        <div class="card"><h3 style="font-size:18px">3 Copilot-Beispiele</h3>
+          <p style="font-size:15.5px">je in zwei Minuten vorführbar</p></div>
+        <div class="card"><h3 style="font-size:18px">Ein echtes 6-Agenten-System</h3>
+          <p style="font-size:15.5px">zum Abschauen, nicht zum Nachbauen</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Tischkarte liegt auf jedem Tisch</span><span>Lisa, zurück zu dir →</span></div>`,
+  notes:[
+    ["say","Alles, was ihr braucht, liegt in einem Repo. Wer nicht mit Git arbeitet, klickt einfach drauf und kopiert den Text — dafür ist es ausgelegt. Drin sind sieben fertige Agenten-Prompts mit Beispiel-Eingabe, das Azure-DevOps-Kit in drei Stufen, und ein komplettes Sechs-Agenten-System aus einem anderen Team, das ihr euch abschauen könnt."],
+    ["say","Lisa, zurück zu dir — die Use Cases."],
+    ["cue","Link groß stehen lassen, bis alle abfotografiert haben. Ruhig zehn Sekunden."]
+  ]
+}
+];
+
+/* ---------------- engine ---------------- */
+const stage=document.getElementById('stage'), gridEl=document.getElementById('grid'),
+      notesEl=document.getElementById('notes'), notesBody=document.getElementById('notesBody'),
+      bar=document.getElementById('bar'), hud=document.getElementById('hud'),
+      hint=document.getElementById('hint');
+let i=0, notesOn=false;
+
+SLIDES.forEach((s,n)=>{
+  const d=document.createElement('div');
+  d.className='slide'; d.dataset.n=n; d.innerHTML=s.html;
+  stage.appendChild(d);
+  const t=document.createElement('div');
+  t.className='thumb';
+  t.innerHTML='<div class="n">'+String(n+1).padStart(2,'0')+'</div><div class="t">'+s.title+'</div>';
+  t.onclick=()=>{go(n);toggleGrid(false)};
+  gridEl.appendChild(t);
+});
+
+function fit(){
+  const s=Math.min(innerWidth/1280, (innerHeight - (notesOn?innerHeight*0.44:0))/720);
+  document.querySelectorAll('.slide').forEach(el=>{
+    el.style.transform='scale('+s+')';
+    el.style.transformOrigin='center center';
+  });
+  stage.style.alignItems = notesOn ? 'flex-start' : 'center';
+  stage.style.paddingBottom = notesOn ? '44vh' : '0';
+}
+function renderNotes(){
+  const s=SLIDES[i];
+  notesBody.innerHTML=(s.notes||[]).map(([k,t])=>
+    k==='cue' ? '<p class="cue">▸ '+t+'</p>' : '<p class="say">„'+t+'"</p>').join('');
+}
+function go(n){
+  i=Math.max(0,Math.min(SLIDES.length-1,n));
+  document.querySelectorAll('.slide').forEach(el=>
+    el.classList.toggle('on', +el.dataset.n===i));
+  bar.style.width=((i+1)/SLIDES.length*100)+'%';
+  hud.textContent=(i+1)+' / '+SLIDES.length;
+  renderNotes(); fit();
+  location.hash=i+1;
+}
+function toggleNotes(v){
+  notesOn = v===undefined ? !notesOn : v;
+  notesEl.classList.toggle('on',notesOn); fit();
+}
+function toggleGrid(v){
+  const on = v===undefined ? !gridEl.classList.contains('on') : v;
+  gridEl.classList.toggle('on',on);
+}
+addEventListener('keydown',e=>{
+  const k=e.key;
+  if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){go(i+1);e.preventDefault()}
+  else if(k==='ArrowLeft'||k==='PageUp'){go(i-1);e.preventDefault()}
+  else if(k==='Home'){go(0)} else if(k==='End'){go(SLIDES.length-1)}
+  else if(k==='n'||k==='N'){toggleNotes()}
+  else if(k==='o'||k==='O'||k==='Escape'){toggleGrid()}
+  else if(k==='d'||k==='D'){
+    const cur=document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', cur==='dark'?'light':'dark');
+  }
+  else if(k==='f'||k==='F'){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(()=>{});
+  }
+});
+addEventListener('resize',fit);
+addEventListener('click',e=>{
+  if(gridEl.classList.contains('on')||notesEl.contains(e.target))return;
+  go(e.clientX < innerWidth*0.28 ? i-1 : i+1);
+});
+setTimeout(()=>{hint.style.opacity='0'},6000);
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+</script>
+</body>
+</html>
