@@ -145,7 +145,7 @@ Kapitel 7 hat dieses Format:
 
 ## 7. Quellen
 - Q1: <Bezeichnung der Quelle, Art, Datum falls genannt>
-- Q2: <...>
+- Q2: <Bezeichnung der Quelle, Art, Datum falls genannt>
 
 Danach:
 

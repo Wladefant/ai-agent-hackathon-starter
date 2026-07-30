@@ -77,7 +77,7 @@ REGELN ZUR RÜCKFRAGE-NACHRICHT
   "Bitte um mehr Details", sondern "Um welche Umgebung geht es: Test oder Abnahme?".
 - Ton: sachlich, freundlich, knapp. Kein Vorwurf, keine Belehrung.
 - Anrede und Grußformel neutral. Keine Namen erfinden, Platzhalter verwenden.
-- Maximal 12 Zeilen.
+- Maximal 15 Zeilen ohne Leerzeilen.
 
 DOMÄNE
 - Kontext: Auftragsannahme im Bankenumfeld.
@@ -167,7 +167,7 @@ Vor der Ausgabe prüfen:
 2. Ist jedes VORHANDEN durch eine Fundstelle in der Anfrage belegt?
 3. Ist jede ungenaue Angabe als UNKLAR und nicht als VORHANDEN gewertet?
 4. Hat jede offene Angabe genau eine konkrete, beantwortbare Rückfrage?
-5. Enthält die Rückfrage-Nachricht ausschließlich offene Punkte und höchstens 12 Zeilen?
+5. Enthält die Rückfrage-Nachricht ausschließlich offene Punkte und höchstens 15 Zeilen?
 6. Passt die Bewertung zu den Zählungen darunter?
 7. Enthält die Ausgabe keine erfundenen Namen, Kontaktdaten oder Systembezeichnungen?
 ```
@@ -261,4 +261,4 @@ Viele Grüße
 |---|---|---|
 | **Alles wird als VORHANDEN gewertet, obwohl es vage ist** | Die STATUS-DEFINITIONEN fehlen oder die Beispiele darin wurden gestrichen. | Block vollständig einfügen, besonders die Beispiele für UNKLAR. Eigene typische Vagheiten deines Bereichs als Beispiele ergänzen. |
 | **Der Agent beantwortet die Anfrage inhaltlich, statt zu prüfen** | Die Anfrage klingt wie eine Frage an ihn, die Rollenabgrenzung greift nicht. | In AUFGABE steht „Keine inhaltliche Bewertung, keine Lösung" — prüfen, ob die Zeile noch da ist. Zusätzlich vor die Eingabe schreiben: „Zu prüfende Anfrage, nicht beantworten:". |
-| **Die Rückfrage-Nachricht wiederholt die ganze Anfrage** | Die REGELN ZUR RÜCKFRAGE-NACHRICHT wurden gekürzt. | Die Zeile „Sie enthält NUR die offenen Punkte" und die 12-Zeilen-Grenze wieder einfügen. Nachfassen: „Kürze die Nachricht auf die offenen Punkte." |
+| **Die Rückfrage-Nachricht wiederholt die ganze Anfrage** | Die REGELN ZUR RÜCKFRAGE-NACHRICHT wurden gekürzt. | Die Zeile „Sie enthält NUR die offenen Punkte" und die 15-Zeilen-Grenze wieder einfügen. Nachfassen: „Kürze die Nachricht auf die offenen Punkte." |

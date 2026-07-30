@@ -239,10 +239,12 @@ NICHT RELEVANT
 
 TESTDATEN-BEDARF (Vermutung, Bestand nicht geprüft)
 - K-02 | benötigt: natürliche Person mit bestehender Kreditlinie und Einzelkonto | Stufe: GEZIELT
-- K-04, K-12 | benötigt: natürliche Person mit Kundenbeziehung unter bzw. exakt 6 Monaten | Stufe: KRITISCH
+- K-04 | benötigt: natürliche Person mit Kundenbeziehung unter 6 Monaten | Stufe: GEZIELT
+- K-12 | benötigt: natürliche Person mit Kundenbeziehung von exakt 6 Monaten am Testtag | Stufe: KRITISCH
 - K-05 | benötigt: gesperrter Kunde, der dennoch einen Kreditantrag starten kann | Stufe: GEZIELT
 - K-06 | benötigt: Geschäftskunde mit Kreditantragsmöglichkeit | Stufe: GEZIELT
-- K-07, K-08, K-09, K-10 | benötigt: Gemeinschaftskonto mit zwei Inhabern, deren Merkmale sich gezielt unterscheiden | Stufe: KRITISCH
+- K-07 | benötigt: Gemeinschaftskonto mit zwei unauffälligen Inhabern | Stufe: GEZIELT
+- K-08, K-09, K-10 | benötigt: Gemeinschaftskonto mit zwei Inhabern, deren Merkmale sich gezielt unterscheiden | Stufe: KRITISCH
 - K-13 | benötigt: Vorgang im Status "manuelle Prüfung" plus Benutzer mit Rolle Kreditprüfung | Stufe: GEZIELT
 
 OFFENE PUNKTE
