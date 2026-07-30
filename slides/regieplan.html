@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Regieplan — wer spricht wann, mit welchem Deck</title>
+<style>
+:root{--orange:#ff6200;--orange-soft:#fff3ea;--ink:#15171c;--ink-2:#525866;--ink-3:#878d9c;
+  --bg:#fbfaf8;--card:#fff;--line:#e7e4de;--green:#0a7f52;--red:#c4372c;--lisa:#2f5fd0;--lisa-soft:#eef3ff}
+html[data-theme="dark"]{--orange:#ff8038;--orange-soft:#2b1a10;--ink:#f1f0ed;--ink-2:#a7acb8;
+  --ink-3:#767c8b;--bg:#0f1115;--card:#171a20;--line:#272b34;--green:#3ddc97;--red:#ff6b5e;
+  --lisa:#7aa2ff;--lisa-soft:#141b2e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);line-height:1.55;
+  font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:20;background:var(--orange);color:#fff;padding:14px 26px;
+  display:flex;justify-content:space-between;align-items:center;gap:18px}
+header .t{font-size:16px;font-weight:700}
+header .m{font-size:13px;opacity:.93}
+header button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);
+  border-radius:7px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-weight:600}
+main{max-width:1080px;margin:0 auto;padding:26px 26px 100px}
+
+h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:38px 0 6px}
+h2:first-of-type{margin-top:0}
+.lead{font-size:16px;color:var(--ink-2);margin-bottom:20px}
+
+.setup{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:20px 24px;margin-bottom:26px}
+.setup h3{font-size:15px;margin-bottom:12px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.tab{background:var(--orange-soft);border:1px solid color-mix(in srgb,var(--orange) 32%,var(--line));
+  border-radius:10px;padding:11px 14px;font-size:13.5px}
+.tab b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:3px}
+
+.row{display:grid;grid-template-columns:86px 1fr;gap:18px;border-left:3px solid var(--line);
+  padding:0 0 0 18px;margin-left:6px}
+.block{margin-bottom:4px;padding:16px 0}
+.block.wl{border-left-color:var(--orange)}
+.block.li{border-left-color:var(--lisa)}
+.time{font-family:ui-monospace,monospace;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;
+  color:var(--ink-3);padding-top:2px}
+.who{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;margin-bottom:7px}
+.who.w{background:var(--orange);color:#fff}
+.who.l{background:var(--lisa);color:#fff}
+.block h3{font-size:18px;font-weight:750;margin-bottom:6px}
+.block p{font-size:15px;color:var(--ink-2);margin-bottom:7px}
+.deck{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:650;
+  background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 11px;margin:5px 6px 0 0}
+.deck.w{border-color:var(--orange);color:var(--orange)}
+.deck.l{border-color:var(--lisa);color:var(--lisa)}
+
+.act{background:var(--orange);color:#fff;border-radius:10px;padding:12px 16px;margin:11px 0;
+  font-size:15px;font-weight:700;display:flex;gap:11px;align-items:flex-start}
+.act .sm{font-weight:500;opacity:.94;font-size:13.5px;display:block;margin-top:2px}
+
+.warn{border:1px solid var(--line);border-left:4px solid var(--red);background:var(--card);
+  border-radius:10px;padding:13px 17px;margin:12px 0;font-size:14.5px}
+.warn b{color:var(--red)}
+.ok{border:1px solid var(--line);border-left:4px solid var(--green);background:var(--card);
+  border-radius:10px;padding:13px 17px;margin:12px 0;font-size:14.5px}
+.ok b{color:var(--green)}
+
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:10px 0 4px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:750}
+td.k{font-weight:650;white-space:nowrap}
+code{font-family:"Cascadia Mono",ui-monospace,monospace;background:var(--orange-soft);
+  padding:1px 5px;border-radius:4px;font-size:.93em}
+@media print{header{position:static} body{background:#fff} .block{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="t">Regieplan — Kickoff 30. Juli, 15:00</div>
+    <div class="m">Wer spricht wann · welches Deck liegt auf dem Beamer · wo du umschaltest</div></div>
+  <div style="display:flex;gap:8px">
+    <button onclick="document.documentElement.setAttribute('data-theme',
+      document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">Dunkel</button>
+    <button onclick="window.print()">Drucken</button>
+  </div>
+</header>
+<main>
+
+<h2>Zwei Decks bleiben zwei Decks</h2>
+<p class="lead">Nichts wird zusammengeführt. Lisa präsentiert ihr Deck, du deins. Wichtig ist
+nur: <b>ihr dürft euch nicht wiederholen.</b> Unten steht, was bewusst bei wem liegt.</p>
+
+<table>
+  <tr><th>Thema</th><th>Wer</th><th>Und der andere?</th></tr>
+  <tr><td class="k">Warum wir hier sind, Ziel des Tages</td><td><b style="color:var(--lisa)">Lisa</b>, Folie 2</td>
+    <td>Du sagst dazu nichts.</td></tr>
+  <tr><td class="k">Was heute technisch geht und wo die Grenze ist</td><td><b style="color:var(--orange)">Du</b>, dein ganzer Block</td>
+    <td><b>Lisas Folie 3 entfällt</b> — dein Block ersetzt sie.</td></tr>
+  <tr><td class="k">Zeitplan des Nachmittags</td><td><b style="color:var(--lisa)">Lisa</b>, Folie 4</td>
+    <td>Du nennst keine Uhrzeiten außer deiner eigenen 4-Minuten-Grenze.</td></tr>
+  <tr><td class="k">Spielregeln (start small, use the coaches)</td><td><b style="color:var(--lisa)">Lisa</b>, Folie 5</td>
+    <td>Du sagst <b>nicht</b> „fragt früh" allgemein. Deine Schlussfolie nennt nur die
+      <b>zwei technischen</b> Sackgassen und wie man sie umbaut.</td></tr>
+  <tr><td class="k">Demo-Format (3 + 2 Minuten)</td><td><b style="color:var(--lisa)">Lisa</b>, Folie 6</td>
+    <td>Du erwähnst es nicht.</td></tr>
+  <tr><td class="k">Jury-Kriterien (Mehrwert, Machbarkeit, …)</td><td><b style="color:var(--lisa)">Lisa</b>, Folie 7</td>
+    <td><b>Du nennst sie nicht</b> — auch nicht nebenbei als Kicker.</td></tr>
+  <tr><td class="k">Die elf Use Cases</td><td><b style="color:var(--lisa)">Lisa</b> + Einreicher, Folien 8–19</td>
+    <td>Du wirfst <b>einen Satz Machbarkeit</b> ein, keine Wiederholung des Inhalts.</td></tr>
+  <tr><td class="k">Werkzeuge, Lizenzen, Prompt-Handwerk, Azure DevOps</td><td><b style="color:var(--orange)">Du</b></td>
+    <td>Kommt bei Lisa nicht vor.</td></tr>
+  <tr><td class="k">Check-in, Abschluss</td><td><b style="color:var(--lisa)">Lisa</b>, Folie 20</td>
+    <td>Du hängst <b>einen</b> Satz an, siehe unten.</td></tr>
+</table>
+
+<div class="ok"><b>Die Trennlinie in einem Satz:</b> Lisa macht den Rahmen — warum, wann, wie
+  bewertet. Du machst das Technische — womit, wie weit, und was schiefgeht.</div>
+
+<h2>Das Grundproblem — zwei Decks, ein Beamer</h2>
+<p class="lead">Lisa präsentiert aus PowerPoint, du aus dem Browser. Beides auf demselben
+Bildschirm. Das muss vorher geklärt sein, sonst kostet es beim Übergang eine Minute Fummelei
+vor 30 Leuten.</p>
+
+<div class="setup">
+  <h3>Empfohlene Lösung — ein Rechner, zwei Fenster, Alt+Tab</h3>
+  <table>
+    <tr><td class="k">Wer teilt</td><td><b>Lisa teilt ihren Bildschirm</b> für Folien 1–2 und ab Folie 4.
+      Für deinen Block teilst <b>du</b>.</td></tr>
+    <tr><td class="k">Wechsel</td><td>Sie beendet die Freigabe, du startest deine. Zwei Klicks,
+      dauert fünf Sekunden — <b>vorher einmal üben.</b></td></tr>
+    <tr><td class="k">Alternative</td><td>Läuft alles über <b>einen</b> Rechner: Lisas PPT im
+      Präsentationsmodus, dein Deck im Browser-Vollbild, Wechsel per <code>Alt+Tab</code>.
+      Dann brauchst du ihre Datei lokal.</td></tr>
+    <tr><td class="k">Nürnberg</td><td><b>Vor 15:00 klären:</b> Sehen die Zugeschalteten den
+      geteilten Bildschirm auch beim Wechsel? Bei manchen Setups bricht die Freigabe ab.</td></tr>
+  </table>
+</div>
+
+<div class="setup">
+  <h3>Deine vier Browser-Tabs — in dieser Reihenfolge öffnen</h3>
+  <div class="tabs">
+    <div class="tab"><b>Tab 1</b>M365 Copilot<br>für den Live-Bau</div>
+    <div class="tab"><b>Tab 2</b>Übersetzungsagent<br>eingeloggt, getestet</div>
+    <div class="tab"><b>Tab 3</b>Testfall-Generator<br>Anforderung bereit</div>
+    <div class="tab"><b>Tab 4</b>Das Repo<br>github.com/…/starter</div>
+  </div>
+  <p style="margin-top:12px;font-size:14px;color:var(--ink-2)">Dein Deck läuft in einem
+    <b>eigenen Fenster</b> im Vollbild (Taste <code>F</code>), nicht als fünfter Tab. Sonst
+    verlierst du es beim Tabwechsel.</p>
+</div>
+
+<h2>Ablauf, Minute für Minute</h2>
+<p class="lead">Blau = Lisa spricht · Orange = du sprichst. Dein Block ist 15:02 bis 15:20.</p>
+
+<div class="block li"><div class="row"><div class="time">15:00</div><div>
+  <span class="who l">Lisa</span>
+  <h3>Folie 1 — Willkommen</h3>
+  <p>Begrüßung, Rahmen, warum wir hier sind.</p>
+  <span class="deck l">Lisas PDF · Folie 1</span>
+  <p style="margin-top:9px"><b>Du:</b> nichts sagen. Deck im Hintergrund schon offen und im Vollbild.</p>
+</div></div></div>
+
+<div class="block li"><div class="row"><div class="time">15:01</div><div>
+  <span class="who l">Lisa</span>
+  <h3>Folie 2 — Warum wir heute hier sind</h3>
+  <p>Hands-on statt Theorie · Business und Tech verbinden · etwas Greifbares schaffen.</p>
+  <span class="deck l">Lisas PDF · Folie 2</span>
+  <div class="ok"><b>Dein Stichwort:</b> Sie endet mit „…und was heute schon machbar ist."
+    <b>Das ist dein Einsatz.</b> Genau an diesem Satz hängst du dich ein — dein erster Satz
+    greift ihn wörtlich auf. So brauchst du keine Vorstellung.</div>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:02</div><div>
+  <span class="who w">Du — Start</span>
+  <h3>Übernahme · dein Deck ab Folie 1</h3>
+  <div class="act"><span>🖥</span><span>JETZT UMSCHALTEN
+    <span class="sm">Lisa beendet Freigabe → du teilst dein Deck-Fenster. Es steht auf Folie 1.</span></span></div>
+  <p><b>Erster Satz:</b> „Genau da mache ich weiter — was ist heute schon machbar. Ich hab das
+    in den letzten Tagen nachgeprüft, nicht aus dem Gedächtnis."</p>
+  <span class="deck w">Dein Deck · Folie 1 „Titel"</span>
+  <div class="warn"><b>Lisas Folie 3</b> („Was heute möglich ist und wo Grenzen liegen") wird
+    <b>nicht gezeigt</b> — dein Block ersetzt sie vollständig. Das muss Lisa vorher wissen,
+    sonst klickt sie weiter.</div>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:02<br>–15:06</div><div>
+  <span class="who w">Du</span>
+  <h3>Teil 1 · Der Überblick</h3>
+  <table>
+    <tr><th>Folie</th><th>Inhalt</th><th>Dauer</th></tr>
+    <tr><td class="k">1</td><td>Titel — was in 20 Minuten kommt</td><td>40 Sek</td></tr>
+    <tr><td class="k">2</td><td>Die drei Bauwege (Agent Builder / Entwickler / Studio)</td><td>2 Min</td></tr>
+    <tr><td class="k">3</td><td>Agent Builder — die harten Zahlen (8.000 Zeichen, 20 Quellen)</td><td>90 Sek</td></tr>
+  </table>
+  <span class="deck w">Dein Deck · Folien 1–3</span>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:06<br>–15:08</div><div>
+  <span class="who w">Du</span>
+  <h3>Teil 2 · Was das für die Teams heißt</h3>
+  <table>
+    <tr><th>Folie</th><th>Inhalt</th><th>Dauer</th></tr>
+    <tr><td class="k">4</td><td>Wissensquellen und Lizenz — der stille Blocker</td><td>75 Sek</td></tr>
+    <tr><td class="k">5</td><td>Die Bauregel: Agent legt vor, Mensch schickt ab</td><td>60 Sek</td></tr>
+  </table>
+  <span class="deck w">Dein Deck · Folien 4–5</span>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:08<br>–15:12</div><div>
+  <span class="who w">Du — Live</span>
+  <h3>Folie 6 · Agent im M365 Copilot bauen</h3>
+  <div class="act"><span>🖥</span><span>ZU TAB 1 WECHSELN — M365 Copilot
+    <span class="sm">Die sieben Schritte stehen auf der Folie. Deck kurz stehen lassen, damit
+    alle mitlesen können, dann rüber.</span></span></div>
+  <p>Neuer Agent → beschreiben statt konfigurieren → Configure → Instructions aus dem Repo →
+    Wissensquelle → Capabilities → Try it.</p>
+  <div class="warn"><b>Harte Grenze: 4 Minuten.</b> Wenn etwas hakt — abbrechen, „das zeig ich
+    euch beim Coaching", zurück zum Deck. Nicht reparieren.</div>
+  <span class="deck w">Dein Deck · Folie 6</span> <span class="deck">Tab 1</span>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:12<br>–15:14</div><div>
+  <span class="who w">Du</span>
+  <h3>Teil 3 · Das Handwerk</h3>
+  <div class="act"><span>🖥</span><span>ZURÜCK ZUM DECK</span></div>
+  <table>
+    <tr><th>Folie</th><th>Inhalt</th><th>Dauer</th></tr>
+    <tr><td class="k">7</td><td>Agent oder Chatbot · die zwei Bedingungen</td><td>45 Sek</td></tr>
+    <tr><td class="k">8</td><td>Prompt-Aufbau: die vier Teile</td><td>45 Sek</td></tr>
+    <tr><td class="k">9</td><td>Der FEHLT-Satz und warum</td><td>45 Sek</td></tr>
+  </table>
+  <div class="ok"><b>Wenn du in Verzug bist:</b> Folie 8 überspringen (steht im Infoblatt).
+    Folie 9 auf keinen Fall — der FEHLT-Satz ist der wertvollste Satz des Vortrags.</div>
+  <span class="deck w">Dein Deck · Folien 7–9</span>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:14<br>–15:17</div><div>
+  <span class="who w">Du — Demos</span>
+  <h3>Folie 10 und 11 · die beiden Live-Beispiele</h3>
+  <div class="act"><span>🖥</span><span>TAB 2 → dann TAB 3
+    <span class="sm">Beide Eingabetexte stehen im Sprechtext-Dokument zum Kopieren.</span></span></div>
+  <p><b>Demo 1</b> Übersetzungsagent — auf das Audit-Log zeigen, nicht auf die Übersetzung.<br>
+     <b>Demo 2</b> Testfall-Generator — die fachliche Schwäche zeigen und stehen lassen.</p>
+  <div class="warn"><b>Wenn eine Demo nicht lädt:</b> „Das Netz will heute nicht, ich zeig's
+    euch nachher am Tisch" und weiter zu den Screenshots auf dem Desktop.
+    <b>Keine fünf Minuten Herumklicken.</b></div>
+  <span class="deck w">Dein Deck · Folien 10–11</span> <span class="deck">Tab 2, Tab 3</span>
+</div></div></div>
+
+<div class="block wl"><div class="row"><div class="time">15:17<br>–15:20</div><div>
+  <span class="who w">Du — Abschluss</span>
+  <h3>Folie 12 bis 14 · Azure DevOps, Mitnehmen, Repo</h3>
+  <div class="act"><span>🖥</span><span>ZURÜCK ZUM DECK · bei Folie 14 kurz zu TAB 4</span></div>
+  <table>
+    <tr><th>Folie</th><th>Inhalt</th><th>Dauer</th></tr>
+    <tr><td class="k">12</td><td>Azure DevOps in drei Stufen — für die vier betroffenen Use Cases</td><td>60 Sek</td></tr>
+    <tr><td class="k">13</td><td>Drei Dinge zum Mitnehmen + „fragt früh"</td><td>45 Sek</td></tr>
+    <tr><td class="k">14</td><td>Das Repo — Link groß stehen lassen</td><td>45 Sek</td></tr>
+  </table>
+  <p><b>Letzter Satz:</b> „Lisa, zurück zu dir — die Use Cases."</p>
+  <div class="ok"><b>Den Link zehn Sekunden stehen lassen</b>, bis alle abfotografiert haben.
+    Auf jedem Tisch liegt zusätzlich die Tischkarte.</div>
+  <span class="deck w">Dein Deck · Folien 12–14</span> <span class="deck">Tab 4</span>
+</div></div></div>
+
+<div class="block li"><div class="row"><div class="time">15:20</div><div>
+  <span class="who l">Lisa</span>
+  <h3>Rückgabe · Lisas Folien 4 bis 7</h3>
+  <div class="act"><span>🖥</span><span>ZURÜCK AN LISA
+    <span class="sm">Du beendest die Freigabe, sie teilt wieder. Ihr Deck steht auf Folie 4.</span></span></div>
+  <table>
+    <tr><th>Folie</th><th>Inhalt</th><th>Dein möglicher Einwurf</th></tr>
+    <tr><td class="k">4</td><td>Ablauf für den Nachmittag</td><td>—</td></tr>
+    <tr><td class="k">5</td><td>Spielregeln: start small, user value, use the coaches</td>
+        <td>„Use the coaches heißt: ich bin der Coach, ich beiß nicht."</td></tr>
+    <tr><td class="k">6</td><td>Was jedes Team zeigt (3 Min + 2 Min)</td>
+        <td>„Und wenn ihr nur einen Prompt habt — den zeigt ihr. Das ist ein Ergebnis."</td></tr>
+    <tr><td class="k">7</td><td>Voting und Jury</td><td>—</td></tr>
+  </table>
+</div></div></div>
+
+<div class="block li"><div class="row"><div class="time">15:25<br>ff.</div><div>
+  <span class="who l">Lisa + Einreicher</span>
+  <h3>Folien 8 bis 19 · die elf Use Cases</h3>
+  <p>Lisa stellt vor, Einreicher ergänzen. <b>Du wirfst pro Use Case einen Satz Machbarkeit ein
+    — nicht mehr.</b> Das ist kein zweiter Vortrag.</p>
+  <table>
+    <tr><th>Nr</th><th>Use Case</th><th>Werkzeug</th><th>Dein Satz</th></tr>
+    <tr><td class="k">01</td><td>Incident Co-Pilot</td><td>M365</td>
+      <td>Klassifizieren und ähnliche Fälle finden geht. Automatisch zuweisen nicht — baut den Vorschlag.</td></tr>
+    <tr><td class="k">02</td><td>Technical Documentation</td><td>GitHub</td>
+      <td>Lebt an Pull Requests und Changes. Braucht jemanden mit Repo-Zugriff.</td></tr>
+    <tr><td class="k">03</td><td>Merak-Version Story</td><td>M365</td>
+      <td>Release Notes lesen und Story vorbereiten: geht. In DevOps anlegen: Text vorlegen, Mensch legt an.</td></tr>
+    <tr><td class="k">04</td><td>QBR Update</td><td>M365</td>
+      <td>Excel lesen, Änderungsvorschläge erzeugen. Der Agent schlägt vor, ihr klickt.</td></tr>
+    <tr><td class="k">05</td><td>Fachkonzept-Doku</td><td>M365</td>
+      <td>User Stories rein, Word-Dokument raus. Standardfall, läuft sicher.</td></tr>
+    <tr><td class="k">06</td><td>BDB Query</td><td>GitHub</td>
+      <td>Query erzeugen geht in beidem. Ausführen braucht Entwickler — Variante 1 ist der realistische Scope.</td></tr>
+    <tr><td class="k">07</td><td>OnePAM API</td><td>GitHub</td>
+      <td>Requests bauen: ja. Abrufen: braucht Zugang. Klärt das in den ersten zehn Minuten.</td></tr>
+    <tr><td class="k">08</td><td>User Story &amp; Change</td><td>M365</td>
+      <td>Der dankbarste Use Case im Feld. In zwei Stunden vorführbar.</td></tr>
+    <tr><td class="k">09</td><td>QBR Request Ersteller</td><td>M365</td>
+      <td>Dialog führen, Pflichtfelder abfragen, Vorlage füllen. Klein und stark.</td></tr>
+    <tr><td class="k">10</td><td>Testkonstellationen</td><td>M365</td>
+      <td>Mein Heimatthema, fragt mich. Achtet auf den Prüfschritt.</td></tr>
+    <tr><td class="k">11</td><td>Dokumentationsunterstützung</td><td>M365</td>
+      <td>Verteilte Quellen zusammenziehen. Genau die Stärke von M365.</td></tr>
+  </table>
+  <div class="ok"><b>Wenn ein Team einen Use Case wählt, der Schreibzugriff braucht:</b>
+    nicht abwürgen. „Baut ihn so, dass er am Ende einen fertigen Text vorlegt. Der letzte Klick
+    ist heute ein Mensch — und das ist genau der Schritt, den man später durchschaltet."</div>
+</div></div></div>
+
+<div class="block li"><div class="row"><div class="time">15:40</div><div>
+  <span class="who l">Lisa</span>
+  <h3>Folie 20 · Bevor wir starten</h3>
+  <p>Check-in, dann geht es ins Bauen.</p>
+  <p><b>Dein Abschlusssatz, wenn sie fertig ist:</b> „Ein Letztes von mir. Ihr müsst heute
+    nichts fertigstellen. Was ihr am Abend zeigt, darf ein einziger Prompt sein, der
+    funktioniert — Hauptsache, ihr könnt sagen, welches Problem er löst und woran man erkennt,
+    dass er es richtig gelöst hat. Wer bei einem der beiden Punkte hängt, holt mich."</p>
+</div></div></div>
+
+<h2>Was Lisa vorher wissen muss</h2>
+<div class="warn">
+  <b>Drei Dinge, sonst geht der Übergang schief:</b>
+  <p style="margin-top:8px;color:var(--ink)">1. <b>Ihre Folie 3 entfällt.</b> Dein Block ersetzt
+    sie. Sie klickt von Folie 2 direkt in die Bildschirmübergabe.</p>
+  <p style="color:var(--ink)">2. <b>Der Übergabesatz.</b> Sie endet Folie 2 mit „…was heute schon
+    machbar ist" — daran hängst du dich ein. Wenn sie anders endet, sag ihr vorher Bescheid.</p>
+  <p style="color:var(--ink)">3. <b>Nach deinem Block macht sie bei Folie 4 weiter</b>, nicht bei 3.</p>
+</div>
+
+<h2>Checkliste bis 14:30</h2>
+<table>
+  <tr><td class="k">☐ Bildschirmübergabe</td><td>einmal mit Lisa geübt — Freigabe beenden, Freigabe starten</td></tr>
+  <tr><td class="k">☐ Nürnberg</td><td>geklärt, ob die Zugeschalteten den Wechsel mitbekommen</td></tr>
+  <tr><td class="k">☐ Deck</td><td><code>folien-wladimir.html</code> offen, Vollbild getestet (Taste F)</td></tr>
+  <tr><td class="k">☐ Tabs 1–4</td><td>in dieser Reihenfolge offen, alle eingeloggt</td></tr>
+  <tr><td class="k">☐ Beide Demos</td><td><b>vor Ort im dortigen Netz</b> einmal durchgelaufen</td></tr>
+  <tr><td class="k">☐ Fallback</td><td>Screenshots beider Demos auf dem Desktop</td></tr>
+  <tr><td class="k">☐ Sprechtext</td><td>auf dem zweiten Bildschirm offen oder ausgedruckt</td></tr>
+  <tr><td class="k">☐ Tischkarten</td><td>ausgedruckt und verteilt</td></tr>
+</table>
+
+</main>
+</body>
+</html>
